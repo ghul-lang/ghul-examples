@@ -395,7 +395,7 @@ partial_application_examples() is
     write_line("add_10(3): {add_10(3)}")
 si
 
-// stream(initial, advance) builds a lazy Pipe[T] from a start state and
+// stream(initial, advance) builds a lazy sequence, a T{}, from a start state and
 // a step function S -> STREAM[T, S]. The step returns DONE to stop, or
 // value || next_state to yield the next value.
 
@@ -425,7 +425,7 @@ stream_examples() is
     // chars-of-a-string: state is an int index, output is char.
     // the canonical "state type differs from output type" example -
     // input is closed over by the anonymous function, integer state is hidden
-    // inside the resulting Pipe[char].
+    // inside the resulting char{} sequence.
 
     let chars_of = s =>
         let xs = s.to_char_array() in
