@@ -1,6 +1,5 @@
-// Writes index.json: every example in reading order, each a list of pieces with
-// its source and expected output. Run from the repository root; the optional
-// argument names the branch the index describes, which defaults to main.
+// writes index.json: every example in reading order, with each piece's source
+// and expected output; the optional argument names the branch, main by default
 
 use IO.Std.write_line
 use Collections.LIST
