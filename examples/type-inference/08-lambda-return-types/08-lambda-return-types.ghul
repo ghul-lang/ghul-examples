@@ -1,0 +1,23 @@
+use IO.Std.write_line
+
+// if a lambda has explicit parameter types but no explicit return type,
+// the return type comes from the body expression:
+let to_message = (name: string, age: int) => "{name} is {age} years old"
+write_line(to_message("ghūl", 12))
+
+// a lambda with a block body has its return type inferred from the
+// LUB of every reachable return expression - all three branches
+// return string here, so the lambda's return type is string:
+let summarise = (n: int) is
+    if n == 0 then
+        return "zero"
+    elif n > 0 then
+        return "positive"
+    else
+        return "negative"
+    fi
+si
+
+write_line("summarise(0): {summarise(0)}")
+write_line("summarise(7): {summarise(7)}")
+write_line("summarise(-3): {summarise(-3)}")

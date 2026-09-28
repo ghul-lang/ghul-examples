@@ -1,0 +1,14 @@
+use IO.Std.write_line
+
+// generic free functions infer their type arguments from their actual
+// arguments, so explicit [T] is rarely needed at the call site:
+apply[T](f: T -> T, x: T) -> T => f(x)
+transform[A, B](f: A -> B, x: A) -> B => f(x)
+
+// T = int from times_2 and 5:
+let times_2 = x => x * 2
+write_line("apply(times_2, 5): {apply(times_2, 5)}")
+
+// A = int, B = string from the lambda and the value:
+let stringified = transform(n => "<{n}>", 42)
+write_line("transform(...): {stringified}")

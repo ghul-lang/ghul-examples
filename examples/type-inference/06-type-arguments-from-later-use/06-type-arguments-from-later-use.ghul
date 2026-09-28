@@ -1,0 +1,35 @@
+use IO.Std.write_line
+use Collections.LIST
+use Collections.MAP
+
+class BOX[T] is
+    value: T public
+
+    init() is si
+
+    set(v: T) is
+        value = v
+    si
+si
+
+// when a let variable of a generic type has no type arguments
+// and no initializer to fix them, the compiler resolves the type
+// from later operations on the value. T is resolved from the .set()
+// call below; the no-argument constructor doesn't pin it:
+let b = BOX()
+b.set(42)
+write_line("b.value: {b.value}")
+
+// standard collections work the same way - T from .add() calls:
+let xs = LIST()
+xs.add(1)
+xs.add(2)
+xs.add(3)
+write_line("xs: {xs |> $}, count: {xs.count}")
+
+// K and V from indexed assignments:
+let m = MAP()
+m["one"] = 1
+m["two"] = 2
+m["three"] = 3
+write_line("m[\"two\"]: {m["two"]}, count: {m.count}")

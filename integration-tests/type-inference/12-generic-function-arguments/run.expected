@@ -1,0 +1,2 @@
+apply(times_2, 5): 10
+transform(...): <42>

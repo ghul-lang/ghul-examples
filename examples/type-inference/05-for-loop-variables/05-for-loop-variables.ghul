@@ -1,0 +1,20 @@
+use IO.Std.write_line
+
+// loop variables get their type from the iterable being looped over.
+// i: int from the range:
+for i in 1::3 do
+    write_line("range value i: {i}")
+od
+
+// c: char from the string iterator:
+for c in "ghul" do
+    write_line("string char c: {c}")
+od
+
+// destructuring composes with loop-variable inference: the
+// iterable's element type is resolved as a tuple, and the
+// tuple's slot types then flow into name and value:
+let pairs = [("a", 1), ("b", 2), ("c", 3)]
+for (name, value) in pairs do
+    write_line("{name} = {value}")
+od

@@ -1,0 +1,11 @@
+use IO.Std.write_line
+
+// destructuring propagates types from the right-hand side into each
+// named variable:
+let person = ("alice", 30)
+let (name, age) = person
+write_line("name: {name} ({name.get_type()}), age: {age} ({age.get_type()})")
+
+// works for nested tuples too:
+let ((first, second), third) = (("a", "b"), "c")
+write_line("first: {first}, second: {second}, third: {third}")

@@ -1,0 +1,8 @@
+use IO.Std.write_line
+
+// a lambda whose parameter type can't be resolved from the body alone,
+// or from the call site alone, but is determined when both directions
+// are combined: .length in the body says x has a length-yielding
+// member, and the call f("hello") says x is a string:
+let f = x => x.length
+write_line("f(\"hello\"): {f("hello")}")

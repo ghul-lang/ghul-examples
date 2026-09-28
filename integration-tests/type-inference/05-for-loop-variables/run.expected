@@ -1,0 +1,10 @@
+range value i: 1
+range value i: 2
+range value i: 3
+string char c: g
+string char c: h
+string char c: u
+string char c: l
+a = 1
+b = 2
+c = 3

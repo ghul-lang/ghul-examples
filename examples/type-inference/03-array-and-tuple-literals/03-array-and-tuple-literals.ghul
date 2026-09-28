@@ -1,0 +1,19 @@
+use IO.Std.write_line
+
+// an array literal's element type is the least upper bound (LUB)
+// of its element types — homogeneous elements collapse to that
+// element type; mixed elements with a common supertype collapse
+// to that supertype:
+let ints = [1, 2, 3]
+let strings = ["one", "two", "three"]
+
+write_line("ints: {ints |> $}")
+write_line("strings: {strings |> $}")
+
+// a tuple's element types come from its element expressions:
+let person = ("alice", 30)
+write_line("person: ({person.`0}, {person.`1})")
+
+// nested:
+let nested = (("alice", 30), [1, 2, 3])
+write_line("nested.`0.`0: {nested.`0.`0}")

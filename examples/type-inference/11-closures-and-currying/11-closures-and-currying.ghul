@@ -1,0 +1,24 @@
+use IO.Std.write_line
+
+class BOX[T](value: T)
+
+make_multiplier(n: int) -> int -> int =>
+    x => x * n
+
+// the outer call curried_add(5) pins a to int from its argument; the
+// inner call add_5(3) then pins b. Neither parameter type is written:
+let curried_add = a => b => a + b
+let add_5 = curried_add(5)
+write_line("add_5(3): {add_5(3)}")
+write_line("add_5(20): {add_5(20)}")
+
+// a factory that captures its argument and returns a closure:
+let times_7 = make_multiplier(7)
+write_line("times_7(6): {times_7(6)}")
+
+// a lambda whose body is a generic constructor with no type
+// arguments: BOX's T comes from the constructor argument, and the
+// lambda's return type follows from there:
+let make_box = n => BOX(n)
+let boxed = make_box(42)
+write_line("boxed.value: {boxed.value}")

@@ -1,0 +1,22 @@
+use IO.Std.write_line
+
+union Shape is
+    CIRCLE(radius: double)
+    SQUARE(side: double)
+si
+
+use Shape.CIRCLE
+use Shape.SQUARE
+
+// isa V(x) tests whether x is variant V of its union. In the
+// then-branch x is narrowed to V and the variant's fields become
+// accessible; with two variants, the else branch narrows to the other:
+describe(s: Shape) -> string =>
+    if isa CIRCLE(s) then
+        "circle of radius {s.radius}"
+    else
+        "square of side {s.side}"
+    fi
+
+write_line(describe(CIRCLE(3.0D)))
+write_line(describe(SQUARE(4.0D)))
