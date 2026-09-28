@@ -41,10 +41,9 @@ if_examples() is
 si
 
 if_expression_examples() is
-    // if can stand in expression position; the type of the result
-    // is whatever type is compatible with all the branch values.
-    // case does the same job and reads cleaner with more arms - see
-    // the pattern-matching example:
+    // if is an expression: its value is the value of the branch that runs.
+    // case works the same way when there are more choices - see the
+    // pattern-matching example:
 
     let day_of_week = System.DateTime(2026, 9, 28).day_of_week
 
@@ -164,10 +163,9 @@ let_use_examples() is
     // reader will be disposed at the end of the block
     // it was declared in
 
-    // use is an operator too: it hands back what it is given, and disposes
-    // it at the end of the block. Holding a sequence's iterator that way,
-    // cursor reads it as a pipe, and first can stop early without leaving
-    // the file open:
+    // use also works on an expression: it gives back its value, and disposes
+    // of it at the end of the block. here it holds the file's lines, so first
+    // can stop reading early without leaving the file open:
     let first_line =
         cursor(use IO.File.read_lines("greeting.txt").iterator) |> first()
 
