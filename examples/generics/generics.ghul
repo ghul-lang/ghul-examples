@@ -34,13 +34,12 @@ class DOG(name: string): Animal is
     speak() -> string => "{name} says woof"
 si
 
-// a type bound [T: Animal] constrains T to types that derive from
-// Animal, and makes Animal's members callable on any value of type T
+// the bound [T: Animal] means T is Animal or derives from it, so Animal's
+// members can be called on a T
 announce[T: Animal](pet: T) -> string =>
     pet.speak()
 
-// a T value also narrows through its bound: isa tests for a specific
-// Animal subtype directly on a T, with no manual widen to Animal
+// isa can test a T for a particular kind of Animal directly
 kind_of[T: Animal](pet: T) -> string =>
     if isa CAT(pet) then
         "a cat"
