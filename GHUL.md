@@ -260,6 +260,28 @@ let first = 1, second: int = 0, third = "three";
 
 The name `_` is a discard placeholder: it stands in for a variable name, but the value that would be assigned to it is discarded. It is accepted in `let` definitions, tuple destructuring, lambda parameters, and `for` loop variables.
 
+`use E` evaluates `E` and disposes the value when the innermost enclosing block ends, on every path out of the block, an exception included. The expression's value is `E`'s, so it can be written wherever `E` could: as an initializer, an argument, an operand. The value's type has to be `Ghul.Disposable`, and a value that is absent is skipped. Values are disposed in the reverse of the order their `use` ran:
+
+```ghul
+let file = use IO.File.open_read(path)
+let reader = use IO.StreamReader(file)
+
+return reader.read_line()
+```
+
+What is disposed is the value `use` saw, so reassigning a `mut` local initialized from one does not change it. Inside a body a statement can start with it, `use R()` on its own holding a value for the rest of the block. At file or namespace level a `use` is an import, so a top-level statement that starts with the operator is written in parentheses, `(use E)`. Disposal belongs to the block, not to the expression: `for x in use f().iterator do ... od` disposes the iterator when the block holding the loop ends, not when the loop does, and `return use E` hands back a value that has already been disposed.
+
+`let use x = E` is the older spelling of `let x = use E`. It cannot be combined with `mut`.
+
+`let use ... in` is the expression form. The local is disposed once the statement holding the expression has run, or, in an expression-bodied function, once the body has been evaluated, so it fits where a block does not:
+
+```ghul
+first_line(path: string) -> string? =>
+    (let use lines = IO.File.read_lines(path).iterator in cursor(lines) |> first())
+```
+
+An asynchronous function's expression body that awaits has nowhere to dispose the local, and there the form is rejected.
+
 Variables are block-scoped — visible from their declaration to the end of the innermost enclosing block — and `let` can only be used inside function, method, or property bodies.
 
 A variable declared at namespace scope is a **global variable**. It is written as a plain name and type, without `let`, and cannot carry an initializer:
@@ -1142,6 +1164,8 @@ si
 ⊗(a: N, b: N) -> N => N(a.v * b.v);
 ```
 
+An operator is resolved among those taking as many operands as it is written with. A prefix `-` is the operator of one operand, so a member `-` of two operands, which takes the left operand as `self`, never answers it, and inside the type declaring that member a prefix `-` still reaches the unary operator declared as a static member or at namespace scope.
+
 Precedence comes from the operator's first character rather than from anything written on the declaration, so an operator that reads as arithmetic binds as arithmetic. From tightest to loosest:
 
 | level | characters |
@@ -1683,7 +1707,7 @@ let m = (box.v = 7; box.v * 2);             // assignment statement, then the va
 
 A parenthesised group commits to the block reading at the first top-level `;` — or immediately, on a token that can only open a statement (`let`, `try`, `return`, ...) — and stays a tuple, a parenthesised expression, or a lambda's formal parameters otherwise. A compound statement (`if`, `case`, `for`, `while`, `do`) opening the group commits the block reading the same way when what follows cannot continue its expression: `(for x in xs do f(x) od 0)` is a block whose tail is `0`, no `;` needed. An operator-headed tail on the same line is the one exception: any operator can also continue the expression, so the group keeps the expression reading there and the compound statement is the operator's left operand (`(if c then 2 else 5 fi - 1)` is 1 when `c` is true). Only the same line does that — the compound statement ends the line it is written on, so an operator opening the next line begins a new statement like any other, and `(if c then 2 else 5 fi` / `-1)` is a block whose tail is `-1` with no `;` needed. So `(a = f(x), b = g(y))` constructs a named tuple while `(a = f(x); b = g(y); a + b)` runs two assignments and yields the sum; the `,`/`;` is the whole difference, and the elements themselves can be any expression in both. A statement whose expression form already exists keeps it: `(let x = 5 in x * 2)` is the `let ... in` expression, unchanged, while `(let x = 5; x * 2)` is a block with a `let` statement and a tail.
 
-A `let use` written directly in a block is rejected: the block has no disposal region to close it in. One written in a statement list nested inside the block - the body of an `if`, of a loop, of a `try` - has a region of its own and is unaffected.
+A block is a block for disposal too: a `use` or `let use` in one disposes when the block ends, before the block's value is used (see [variables](#variables)).
 
 A common use is loop-as-expression — fold an iterable into a value with the loop body updating a `mut` accumulator and the tail expression handing back the result:
 
@@ -1926,7 +1950,7 @@ let seen: SET[string] = _(names);
 
 A sequence closes off into text the same way. `string(p)` renders each element as `join` does and puts nothing between them, and `string(p, separator)` puts `separator` between each pair, so `word |> reverse() |> string()` is the word reversed, `[1, 2, 3] |> string()` is `123`, and `names |> string(", ")` is the names joined with commas. A sequence's own text, with its brackets, is still what `$` and interpolation give.
 
-The sequence combinators are global functions in `Ghul.Pipes`, each taking the sequence as its first argument, so the thread-first operator `|>` chains them. ghūl provides the usual set, in the manner of LINQ, and none of them mutate the source. They split into lazy stages that return a new sequence — `map`, `filter`, `flat_map`, `skip`, `take`, `cat`, `index`, `zip`, `sort` — and terminals that consume it and produce a value: `reduce`, `sum`, `product`, `collect` / `collect_mutable` / `collect_set` / `collect_map`, `count`, `find`, `find_map`, `first`, `only`, `any`, `all`, `each`, `join`, `append_to`. `collect` produces an array, and `collect_mutable` a `LIST` that can be changed.
+The sequence combinators are global functions in `Ghul.Pipes`, each taking the sequence as its first argument, so the thread-first operator `|>` chains them. ghūl provides the usual set, in the manner of LINQ, and none of them mutate the source. They split into lazy stages that return a new sequence — `map`, `filter`, `flat_map`, `skip`, `take`, `cat`, `index`, `zip`, `sort` — and terminals that consume it and produce a value: `reduce`, `sum`, `product`, `collect` / `collect_mutable` / `collect_set` / `collect_map` / `collect_mutable_map`, `count`, `find`, `find_map`, `first`, `only`, `any`, `all`, `each`, `join`, `append_to`. `collect` produces an array, and `collect_mutable` a `LIST` that can be changed. The collecting ones are the constructors above written as functions, and close a sequence off the same way: `collect` and `ARRAY(p)`, `collect_mutable` and `LIST(p)`, `collect_set` and `SET(p)`, `collect_mutable_map` and `MAP(p)`, `join` and `string(p, separator)`. `collect_map` is the exception: it gives back the read-only `Map`.
 
 ```ghul
 let numbers = [1, 2, 3, 4, 5];
@@ -1944,19 +1968,25 @@ or `1` rather than an absent value, which is where the two differ from `min` and
 `max`: those answer with a `MAYBE[T]`, since there is no least element of
 nothing.
 
-Every read of a pipe starts from the beginning, and two reads in progress at once are independent. That holds however it is read — through `for`, a combinator, a terminal or interpolation — so `for x in p` twice sees every element twice, a read that stops part way leaves nothing behind for the next, and `p |> count()` followed by `p |> only()` walks the whole sequence both times. `p |> take(2)` yields the first two elements every time it is read, and `skip` is how to page. The combinators return `T{}`, and each read of what they return reads its source afresh in turn. A terminal that stops before the end, such as `first` or `find`, disposes the iterator it read, as .NET's own LINQ operators do; a `for` loop does not (below). A generator's `dispose()` releases nothing - it does not run the body's `finally` clauses or dispose an iterator the body is walking with `yield in`. `memo` reads its source once, and every read of it replays what it cached, asking the source for more only past the end of the cache.
+Every read of a pipe starts from the beginning, and two reads in progress at once are independent. That holds however it is read — through `for`, a combinator, a terminal or interpolation — so `for x in p` twice sees every element twice, a read that stops part way leaves nothing behind for the next, and `p |> count()` followed by `p |> only()` walks the whole sequence both times. `p |> take(2)` yields the first two elements every time it is read, and `skip` is how to page. The combinators return `T{}`, and each read of what they return reads its source afresh in turn. Neither a terminal nor a `for` loop disposes the iterator it reads, whether or not it reads to the end (below). A generator's `dispose()` releases nothing - it does not run the body's `finally` clauses or dispose an iterator the body is walking with `yield in`. `memo` reads its source once, and every read of it replays what it cached, asking the source for more only past the end of the cache.
 
-A `for` loop does not dispose what it iterated, so a sequence that holds a resource is disposed by naming its iterator and letting `let use` close it. That covers the few that hold one: file and directory enumeration, a database reader, a PLINQ query, and a .NET iterator written with a `using`. It matters where the loop can be left early, since the iterator is then still open.
+A `for` loop does not dispose what it iterated, so a sequence that holds a resource is disposed by taking its iterator with `use`. That covers the few that hold one: file and directory enumeration, a database reader, a PLINQ query, and a .NET iterator written with a `using`. It matters where the loop can be left early, since the iterator is then still open.
 
 ```ghul
-let use lines = IO.File.read_lines(path).iterator
-
-for line in lines do
+for line in use IO.File.read_lines(path).iterator do
     if line.starts_with(wanted) then
         return line
     fi
 od
 ```
+
+A pipe is built over the held iterator with `cursor`, which reads the iterator it is given rather than asking the source for a new one, so an early-exit terminal on it leaves the resource to `use`:
+
+```ghul
+return cursor(use IO.File.read_lines(path).iterator) |> skip(wanted - 1) |> first()
+```
+
+The `undisposed-source` warning reports a read that can stop before the end of one of these sources with nothing holding it: an early-exit terminal or stage such as `first`, `find`, `any`, `all`, `only` or `take`, or a `for` loop whose body can `break` out of it or `return`. The call to the source has to be the read's source, or be reached from it through other pipe stages. A read to the end lets the source close itself and draws nothing, and so does a stage that reads all of its source before passing anything on, such as `sort` or `reverse`. A sequence held in a local variable, a field or anywhere else first is not followed.
 
 A pipe can also be started from nothing. `repeat(value)` yields `value` without end and `repeat(value, count)` yields it `count` times; `from(start)` counts upwards from `start` without end, and `from(start, step)` counts in steps of `step`. Collected, a bounded `repeat` is how a list of a given size is made:
 
@@ -1980,7 +2010,7 @@ let c = 5 |> double() |> add(1); // add(double(5), 1) is 11
 
 `|>` and `~>` are a precedence level of their own, below range and above relational (see [operators](#operators)), so the subject is everything to the left that binds tighter: `1 + 2 |> double()` is `double(1 + 2)`, and `0..n |> map(f)` maps the whole range. A comparison or a boolean operator stays outside the chain, so `xs |> count() > 3` compares the count and `ready /\ xs |> any(p)` tests `ready` first.
 
-A prefix operator applies to its operand before the chain does, so `!xs |> any(p)` negates `xs` rather than the answer, and `await t |> f()` is `f(await t)`. Parenthesise the chain for the other reading: `!(xs |> any(p))`.
+A prefix operator applies to its operand before the chain does, so `!xs |> any(p)` negates `xs` rather than the answer, and `await t |> f()` is `f(await t)`. `use` binds the same way: `use open(p) |> first()` disposes what `open(p)` returns, while `use open(p).iterator` disposes the iterator, since a member access binds tighter than any prefix operator. Parenthesise the chain for the other reading: `!(xs |> any(p))`.
 
 The subject goes into the last call written on the right-hand side, so `x |> box.combine(a)` is `box.combine(x, a)` and `x |> BOX(1).combine(a)` is `BOX(1).combine(x, a)`. Member access, indexing, `!` and `?` written after that call apply to its result, as they would after any call: `xs |> collect_mutable()[0]` is the first element and `xs |> collect_mutable().count` the count. An operator written after the call applies to the result of the whole chain, so `xs |> count() % 2` is `count(xs) % 2`.
 
@@ -2518,6 +2548,14 @@ doubled(x: int) -> int => x * 2;
 tripled(x: int) -> int => x * 3;
 ```
 
+`System.Runtime.CompilerServices.MethodImpl` says how the runtime is to treat the method it is written on. The options it names become the method's implementation flags rather than an attribute the method carries, which is where the runtime reads them from, so `NO_INLINING` keeps the method out of the inliner and `SYNCHRONIZED` takes the lock. Reflection reads the flags back through `get_method_implementation_flags`, and finds no `MethodImplAttribute` among the method's custom attributes:
+
+```ghul
+@System.Runtime.CompilerServices.MethodImpl(
+    System.Runtime.CompilerServices.MethodImplOptions.NO_INLINING)
+measured(x: int) -> int => x + 1;
+```
+
 `System.Runtime.InteropServices.DllImport` on a static method with no body declares a call into a shared library. The method is emitted as the call itself rather than as a method carrying an attribute, so it needs no body and cannot have one:
 
 ```ghul
@@ -2535,3 +2573,18 @@ si
 The name looked up in the library is the method's own, spelled as written, unless `entry_point` gives another: a native symbol is matched exactly, so none of the case conversion that applies to a .NET name applies here. `char_set`, `set_last_error`, `exact_spelling` and `calling_convention` are carried through as written.
 
 What can cross the boundary is what the machine lays out the same way on both sides: the scalar types, a pointer, a `ref` to a scalar, and a `string` argument, which is marshalled to a null-terminated buffer for the duration of the call. A returned `string` is not accepted, since freeing the buffer the library returned is the library's business rather than the runtime's. Anything else, such as a class, a tuple, an array or a function, is reported at the declaration rather than emitted.
+
+`System.Runtime.InteropServices.StructLayout` on a class or struct sets how its fields are laid out, which is what a native structure the type stands for has to match. Its kind, `pack`, `size` and `char_set` become the type's own layout rather than an attribute it carries. A struct is laid out sequentially without it, in the order its members are declared; a class is laid out as the runtime chooses unless it asks for `SEQUENTIAL`. `EXPLICIT` places each field where a `System.Runtime.InteropServices.FieldOffset` on it says, so two fields can share bytes, and every instance field of such a type has to carry one, which rules out auto-properties there:
+
+```ghul
+@System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.EXPLICIT)
+struct WORD_BYTES is
+    @System.Runtime.InteropServices.FieldOffset(0)
+    word: ushort field
+
+    @System.Runtime.InteropServices.FieldOffset(0)
+    low: ubyte field
+
+    init() is si
+si
+```
