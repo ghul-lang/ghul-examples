@@ -2,8 +2,8 @@ use IO.Std.write_line
 use Ghul.Pipes.from
 use Ghul.Pipes.take
 
-// A list comprehension builds an array: the element first, then one or more
-// for clauses, each optionally followed by if clauses.
+// a list comprehension builds an array: the element first, then for
+// clauses, each optionally followed by if clauses
 
 entry() is
     let squares = [x * x for x in 1::5]
