@@ -31,9 +31,10 @@ char 2 of 'hello' is l
 char 3 of 'hello' is l
 char 4 of 'hello' is o
 we're pretty sure a wombat is the same as an elephant, right?
-err, maybe not: control-flow.ghul 130,9..130,33: wombat =~ elephant
+err, maybe not: control-flow.ghul 132,9..132,33: wombat =~ elephant
 resource acquired
 caught: oops: exception with resource held
 resource released
 done
+Hello, World!
 Hello, World!
