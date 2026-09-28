@@ -98,8 +98,13 @@ entry() is
     write_line("upper cased: '{upper}'")
 
     // reduce accumulates a running value according to a supplied function:
-    let sum = [1, 2, 3, 4, 5, 6, 7, 8] |> reduce(0, (r, e) => r + e)
-    write_line("sum is: {sum}")
+    let folded = [1, 2, 3, 4, 5, 6, 7, 8] |> reduce(0, (r, e) => r + e)
+    write_line("sum with reduce: {folded}")
+
+    // sum and product total a sequence without a starting value:
+    let total = [1, 2, 3, 4, 5, 6, 7, 8] |> sum()
+    let factorial = 1::6 |> product()
+    write_line("sum is: {total}, 6! is: {factorial}")
 
     // you can chain multiple calls in a fluent style:
     let count_greater_than_3 =
@@ -159,6 +164,14 @@ entry() is
             cat([8, 7, 6, 5, 4, 3, 2, 1])
 
     write_line("concatenated is: {concatenated}")
+
+    // a chain closes off into a collection by constructing one from it:
+    let squares = 1::5 |> map(i => i * i) |> ARRAY()
+    write_line("squares: {squares}")
+
+    // and into text with string, which puts a separator between elements:
+    let dashed = 1::5 |> string("-")
+    write_line("dashed: {dashed}")
 
     // index() tags each element with its 0-based index in the sequence:
     let indexed = ["cat", "dog", "fish", "zebra", "ameoba"] |> index()
