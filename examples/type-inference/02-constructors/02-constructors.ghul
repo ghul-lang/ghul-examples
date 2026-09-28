@@ -3,8 +3,7 @@ use IO.Std.write_line
 class BOX[T](value: T)
 class PAIR[A, B](first: A, second: B)
 
-// generic class constructors infer their type arguments from their actual
-// arguments, so explicit [T] / [A, B] type arguments are not needed:
+// a generic class's type arguments come from its constructor's arguments:
 let int_box = BOX(42)
 let string_box = BOX("hello")
 let pair = PAIR(123, "hello")

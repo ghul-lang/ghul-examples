@@ -1,13 +1,6 @@
 use IO.Std.write_line
 
-// the most demanding inference case: a lambda whose parameter
-// type can't be resolved from the body alone, *or* from the call
-// site alone, but is determined when both directions are
-// combined.
-//
-// Here .length in the body says x has a length-yielding member,
-// and the call site f("hello") says x is a string. Each
-// constraint on its own would leave x ambiguous; the intersection
-// pins it precisely:
+// x's type comes from both the body, which reads x.length, and the
+// call, which passes a string. neither is enough on its own:
 let f = x => x.length
 write_line("f(\"hello\"): {f("hello")}")

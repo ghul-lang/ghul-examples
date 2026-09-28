@@ -1,18 +1,15 @@
 use IO.Std.write_line
 use Ghul.Pipes.map
 
-// inference is iterative: information flows both into and out of a
-// lambda's body, so use-site context can determine a lambda's
-// parameter types when its body alone wouldn't be enough:
+// a function literal's parameter types can come from where it is used,
+// when its body alone doesn't say what they are:
 
-// add's signature pins x and y to int:
 let add = (x: int, y: int) => x + y
 
-// here y has no explicit type but it's passed to add as the second
-// argument, so its type is inferred from add's signature:
+// y has no written type, and is an int because it's passed to add:
 let add_5 = y => add(5, y)
 write_line("add_5(3): {add_5(3)}")
 
-// back-propagation through a list literal:
+// s is a string, from the list it is mapped over:
 let lengths = ["one", "fourteen", "five"] |> map(s => s.length)
 write_line("lengths: {lengths}")

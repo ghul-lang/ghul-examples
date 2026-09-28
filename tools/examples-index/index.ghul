@@ -28,11 +28,6 @@ let topics = [
     ("type-inference", "type inference")
 ]
 
-let piece_titles = [
-    ("type-inference/07-lambdas-from-call-context", "function literals from call context"),
-    ("type-inference/08-lambda-return-types", "function literal return types")
-] |> collect_map()
-
 // an expected-output file can have Windows line endings, so normalise them
 read_or_null(path: string) -> string? =>
     if IO.File.exists(path) then IO.File.read_all_text(path).replace("\r\n", "\n") else null fi
@@ -66,7 +61,7 @@ write_piece(writer: Utf8JsonWriter, id: string, title: string, path: string, tes
 
     writer.write_start_object()
     writer.write_string("id", id)
-    writer.write_string("title", if piece_titles.contains_key(id) then piece_titles[id] else title fi)
+    writer.write_string("title", title)
     writer.write_string("path", path)
     writer.write_string("source", source)
     write_optional(writer, "output", read_or_null("{test}/run.expected"))

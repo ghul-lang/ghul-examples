@@ -1,9 +1,7 @@
 use IO.Std.write_line
 
-// an array literal's element type is the least upper bound (LUB)
-// of its element types — homogeneous elements collapse to that
-// element type; mixed elements with a common supertype collapse
-// to that supertype:
+// an array literal's element type is its elements' type where they
+// all agree, and their closest common supertype where they don't:
 let ints = [1, 2, 3]
 let strings = ["one", "two", "three"]
 

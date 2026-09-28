@@ -5,27 +5,17 @@ class BOX[T](value: T)
 make_multiplier(n: int) -> int -> int =>
     x => x * n
 
-// inference treats lambdas as ordinary values: anywhere a typed
-// value can appear, a lambda whose type is being inferred can
-// appear too, and the same machinery applies:
-
-// the outer call curried_add(5) pins a to int from its int
-// argument; the inner call add_5(3) then pins b to int from
-// its argument. Neither parameter type is written anywhere:
+// a comes from curried_add(5), and b from add_5(3):
 let curried_add = a => b => a + b
 let add_5 = curried_add(5)
 write_line("add_5(3): {add_5(3)}")
 write_line("add_5(20): {add_5(20)}")
 
-// a factory that captures its argument and returns a closure.
-// x is resolved from x * n (n is already int) and the outer
-// return signature pins the lambda's shape:
+// make_multiplier returns a closure that captures n:
 let times_7 = make_multiplier(7)
 write_line("times_7(6): {times_7(6)}")
 
-// a lambda whose body is a generic constructor with no type
-// arguments: BOX's T is inferred from the constructor argument,
-// and the lambda's return type follows from there:
+// BOX's T comes from n, and make_box's return type from BOX:
 let make_box = n => BOX(n)
 let boxed = make_box(42)
 write_line("boxed.value: {boxed.value}")

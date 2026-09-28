@@ -8,19 +8,12 @@ si
 use Shape.CIRCLE
 use Shape.SQUARE
 
-// isa V(x) tests whether x is variant V of its union. In the
-// then-branch x is narrowed to V and the variant's fields become
-// accessible. When the union has exactly two variants the else
-// branch narrows to the other; with three or more variants the
-// else branch narrows only to "not this one" — the rest taken as
-// a union, whose shared members remain reachable but
-// variant-specific fields do not:
 describe(s: Shape) -> string =>
     if isa CIRCLE(s) then
         // s is narrowed to CIRCLE here, so .radius is accessible:
         "circle of radius {s.radius}"
     else
-        // two variants, so the else branch narrows s to SQUARE — .side is accessible:
+        // two variants, so the else branch narrows s to SQUARE, and .side is accessible:
         "square of side {s.side}"
     fi
 

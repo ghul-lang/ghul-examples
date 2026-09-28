@@ -11,9 +11,7 @@ for c in "ghul" do
     write_line("string char c: {c}")
 od
 
-// destructuring composes with loop-variable inference: the
-// iterable's element type is resolved as a tuple, and the
-// tuple's slot types then flow into name and value:
+// a loop variable can destructure, and each name gets its part's type:
 let pairs = [("a", 1), ("b", 2), ("c", 3)]
 for (name, value) in pairs do
     write_line("{name} = {value}")
