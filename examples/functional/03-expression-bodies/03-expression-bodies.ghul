@@ -1,0 +1,10 @@
+// an expression-bodied function, with let ... in naming an intermediate value
+expression_body_example(a: int, b: int) -> string =>
+    let sum = a + b in
+    if sum > 10 then
+        "{sum} > 10"
+    else
+        "{sum} <= 10"
+    fi
+
+expression_body_example(3, 4)

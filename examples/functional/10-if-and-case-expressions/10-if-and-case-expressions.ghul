@@ -1,0 +1,35 @@
+use IO.Std.write_line
+
+// an if-then-else-fi can stand in expression position: both
+// branches produce a value, and the result type is whatever type
+// is compatible with both:
+let parity =
+    n =>
+        if n % 2 == 0 then
+            "even"
+        else
+            "odd"
+        fi
+
+write_line("parity(10): {parity(10)}")
+write_line("parity(11): {parity(11)}")
+
+// case does the same job and reads cleaner with more arms. an
+// arm can match several values at once. an expression-position
+// case requires an else arm:
+let describe =
+    n =>
+        case n
+        when -1 then "minus one"
+        when 0 then "zero"
+        when 1 then "one"
+        when 2 then "two"
+        when 6, 7, 8 then "small"
+        when 13 then "unlucky"
+        else "other"
+        esac
+
+write_line("describe(-1): {describe(-1)}")
+write_line("describe(2): {describe(2)}")
+write_line("describe(7): {describe(7)}")
+write_line("describe(42): {describe(42)}")

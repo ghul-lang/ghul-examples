@@ -1,0 +1,6 @@
+parity(10): even
+parity(11): odd
+describe(-1): minus one
+describe(2): two
+describe(7): small
+describe(42): other
