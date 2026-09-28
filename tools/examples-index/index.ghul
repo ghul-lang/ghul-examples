@@ -1,0 +1,131 @@
+// Writes index.json: every example in reading order, each a list of pieces with
+// its source and expected output. Run from the repository root; the optional
+// argument names the branch the index describes, which defaults to main.
+
+use IO.Std.write_line
+use Collections.LIST
+use Ghul.Pipes
+
+use System.Text.Json.Utf8JsonWriter
+use System.Text.Json.JsonWriterOptions
+
+let topics = [
+    ("hello-world", "hello world"),
+    ("literals", "literals"),
+    ("control-flow", "control flow"),
+    ("expression-oriented", "expression-oriented code"),
+    ("functional", "functional programming"),
+    ("closures", "closures"),
+    ("pipes", "pipes"),
+    ("comprehensions", "comprehensions"),
+    ("object-oriented", "object-oriented programming"),
+    ("unions", "unions"),
+    ("pattern-matching", "pattern matching"),
+    ("generics", "generics"),
+    ("optionals", "optional types"),
+    ("async-await", "asynchronous code"),
+    ("generators", "generators"),
+    ("type-inference", "type inference")
+]
+
+let piece_titles = [
+    ("type-inference/07-lambdas-from-call-context", "function literals from call context"),
+    ("type-inference/08-lambda-return-types", "function literal return types")
+] |> collect_map()
+
+// an expected-output file can have Windows line endings, so normalise them
+read_or_null(path: string) -> string? =>
+    if IO.File.exists(path) then IO.File.read_all_text(path).replace("\r\n", "\n") else null fi
+
+is_piece_name(name: string) -> bool =>
+    name.length > 3 /\ char.is_digit(name[0]) /\ char.is_digit(name[1]) /\ name[2] == '-'
+
+piece_names(slug: string) -> LIST[string] is
+    let names = IO.Directory.get_directories("examples/{slug}")
+        |> map(d => IO.Path.get_file_name(d) ?? "")
+        |> filter(is_piece_name)
+        |> collect_mutable()
+
+    names.sort(System.StringComparer.ordinal)
+
+    return names
+si
+
+write_optional(writer: Utf8JsonWriter, name: string, value: string?) is
+    if let text = value then
+        writer.write_string(name, text)
+    else
+        writer.write_null(name)
+    fi
+si
+
+write_piece(writer: Utf8JsonWriter, id: string, title: string, path: string, test: string) is
+    let source = read_or_null(path)
+
+    assert source? else "missing source {path}"
+
+    writer.write_start_object()
+    writer.write_string("id", id)
+    writer.write_string("title", if piece_titles.contains_key(id) then piece_titles[id] else title fi)
+    writer.write_string("path", path)
+    writer.write_string("source", source)
+    write_optional(writer, "output", read_or_null("{test}/run.expected"))
+    writer.write_end_object()
+si
+
+let listed = topics |> map(((slug, _)) => slug) |> collect_set()
+
+let unlisted = IO.Directory.get_directories("examples")
+    |> map(d => IO.Path.get_file_name(d) ?? "")
+    |> filter(name => !listed.contains(name))
+    |> collect()
+
+assert unlisted.count == 0 else "examples not in the topic list: {unlisted |> join(", ")}"
+
+let branch = if args.count > 0 then args[0] else "main" fi
+
+let options mut = _[JsonWriterOptions]
+options.indented = true
+options.encoder = System.Text.Encodings.Web.JavaScriptEncoder.unsafe_relaxed_json_escaping
+
+let stream = IO.MemoryStream()
+let writer = Utf8JsonWriter(stream, options)
+
+writer.write_start_object()
+writer.write_number("version", 1)
+writer.write_string("ref", branch)
+writer.write_start_array("topics")
+
+for (slug, title) in topics do
+    writer.write_start_object()
+    writer.write_string("slug", slug)
+    writer.write_string("title", title)
+    write_optional(writer, "intro", read_or_null("examples/{slug}/intro.md"))
+    writer.write_start_array("pieces")
+
+    let names = piece_names(slug)
+
+    if names.count == 0 then
+        write_piece(writer, slug, title, "examples/{slug}/{slug}.ghul", "integration-tests/{slug}")
+    else
+        for name in names do
+            write_piece(
+                writer,
+                "{slug}/{name}",
+                name.substring(3).replace('-', ' '),
+                "examples/{slug}/{name}/{name}.ghul",
+                "integration-tests/{slug}/{name}")
+        od
+    fi
+
+    writer.write_end_array()
+    writer.write_end_object()
+od
+
+writer.write_end_array()
+writer.write_end_object()
+writer.flush()
+
+IO.File.write_all_bytes("index.json", stream.to_array())
+
+write_line("index.json: {topics.count} topics")
