@@ -44,7 +44,7 @@ if_expression_examples() is
     // case does the same job and reads cleaner with more arms - see
     // the pattern-matching example:
 
-    let day_of_week = System.DateTime.now.day_of_week
+    let day_of_week = System.DateTime(2026, 9, 28).day_of_week
 
     let greeting =
         if day_of_week == System.DayOfWeek.MONDAY then
@@ -55,7 +55,7 @@ if_expression_examples() is
             "meh: {day_of_week.to_string().to_lower()}"
         fi
 
-    write_line(day_of_week)
+    write_line(greeting)
 si
 
 while_examples() is
