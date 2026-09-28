@@ -7,11 +7,9 @@ entry() is
     lookups()
 si
 
-// a union is a reference type that holds one of a fixed, closed set
-// of variants. a primary constructor header declares state shared by
-// every variant; each variant splices those shared parameters in with
-// '..' alongside its own fields. a variant that adds no fields of its
-// own drops the parentheses entirely - the '..' splice is then implied.
+// a union holds one of a fixed set of variants. the fields in its header are
+// shared by every variant, which takes them with '..'. a variant with no
+// fields of its own can leave out the parentheses and the '..'.
 union Shape(name: string) is
     RECTANGLE(.., width: int, height: int)
     SQUARE(.., side: int)
@@ -22,10 +20,8 @@ use Shape.RECTANGLE
 use Shape.SQUARE
 use Shape.POINT
 
-// a union body holds only variants, so methods are added in a partial
-// block. a case over a union matches its variants exhaustively: every
-// variant is covered here, so no else arm is needed, and the compiler
-// flags a missing or unreachable arm.
+// methods are added to a union in a partial block. this case covers every
+// variant, so it doesn't need an else arm.
 partial Shape is
     area() -> int =>
         case self
@@ -64,9 +60,8 @@ label(shape: Shape) -> string =>
         "{shape.name} is a point"
     fi
 
-// a separate impl block makes the union satisfy a trait without
-// naming it in the union header. inside the block self is a Shape, so
-// its shared fields and partial-block methods are in scope.
+// an impl block makes the union implement a trait without naming the trait
+// in the union's header. inside it, self is a Shape.
 trait Describable is
     describe() -> string
 si
@@ -77,7 +72,7 @@ impl Describable for Shape is
 si
 
 describing_shapes() is
-    // Shape satisfies Describable, so Shape values flow wherever a
+    // Shape implements Describable, so a Shape can be passed where a
     // Describable is expected
     let items = Collections.LIST[Describable]()
 
