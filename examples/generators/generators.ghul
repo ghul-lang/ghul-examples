@@ -5,13 +5,10 @@ use Ghul.Pipes.map
 use Ghul.Pipes.filter
 use Ghul.Pipes.take
 
-// A function that returns T{} and contains a yield is a generator.
-// Each yield produces the next value, then execution pauses until the
-// caller asks for another. The compiler rewrites the body into a state
-// machine, so ordinary locals keep their values across the pauses.
-//
-// A generator is a Pipe, so it can be looped over directly and composed
-// with the thread-first operator |> and functions like map, filter, take.
+// a function that returns T{} and contains yield is a generator. each yield
+// produces the next value, and the function carries on from there, with its
+// locals as it left them, when the next one is asked for. a generator can be
+// looped over, or piped into map, filter, take and the rest.
 
 count_up_to(n: int) -> int{} is
     let i mut = 1
@@ -21,8 +18,8 @@ count_up_to(n: int) -> int{} is
     od
 si
 
-// Generators compose: this one reads another iterable and yields a
-// running total, pausing after every element.
+// generators compose: this one reads another sequence and yields a running
+// total:
 running_totals(xs: Iterable[int]) -> int{} is
     let total mut = 0
     for x in xs do
@@ -31,8 +28,7 @@ running_totals(xs: Iterable[int]) -> int{} is
     od
 si
 
-// The first n Fibonacci numbers. a and b are plain locals that survive
-// each yield.
+// the first n Fibonacci numbers. a and b keep their values across each yield:
 fibonacci(n: int) -> int{} is
     let a mut = 0
     let b mut = 1
