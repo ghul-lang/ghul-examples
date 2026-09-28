@@ -1,5 +1,7 @@
 use IO.Std.write_line
 use Ghul.Pipes.index
+use Ghul.Pipes.cursor
+use Ghul.Pipes.first
 
 entry() is
     assert_examples()
@@ -44,7 +46,7 @@ if_expression_examples() is
     // case does the same job and reads cleaner with more arms - see
     // the pattern-matching example:
 
-    let day_of_week = System.DateTime.now.day_of_week
+    let day_of_week = System.DateTime(2026, 9, 28).day_of_week
 
     let greeting =
         if day_of_week == System.DayOfWeek.MONDAY then
@@ -55,7 +57,7 @@ if_expression_examples() is
             "meh: {day_of_week.to_string().to_lower()}"
         fi
 
-    write_line(day_of_week)
+    write_line(greeting)
 si
 
 while_examples() is
@@ -161,4 +163,13 @@ let_use_examples() is
 
     // reader will be disposed at the end of the block
     // it was declared in
+
+    // use is an operator too: it hands back what it is given, and disposes
+    // it at the end of the block. Holding a sequence's iterator that way,
+    // cursor reads it as a pipe, and first can stop early without leaving
+    // the file open:
+    let first_line =
+        cursor(use IO.File.read_lines("greeting.txt").iterator) |> first()
+
+    write_line(first_line ?? "(empty)")
 si

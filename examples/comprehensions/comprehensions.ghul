@@ -1,0 +1,32 @@
+use IO.Std.write_line
+use Ghul.Pipes.from
+use Ghul.Pipes.take
+
+// a list comprehension builds an array: the element first, then for
+// clauses, each optionally followed by if clauses
+
+entry() is
+    let squares = [x * x for x in 1::5]
+    write_line("squares: {squares}")
+
+    // each for clause sees the variables of the clauses before it, and an
+    // if clause keeps only the elements its condition holds for:
+    let triples = [
+        (a, b, c)
+        for a in 1::20
+        for b in a::20
+        for c in b::20
+        if a * a + b * b == c * c
+    ]
+    write_line("right triangles: {triples}")
+
+    // an if clause narrows what it tests, so name is a string here:
+    let names: string?[] = ["ada", null, "grace"]
+    let lengths = [name.length for name in names if name?]
+    write_line("name lengths: {lengths}")
+
+    // in braces the comprehension is lazy: a pipe that works out each element
+    // only when it is read, so its source can go on forever:
+    let odd_squares = {n * n for n in from(1) if n % 2 == 1}
+    write_line("first odd squares: {odd_squares |> take(4)}")
+si
