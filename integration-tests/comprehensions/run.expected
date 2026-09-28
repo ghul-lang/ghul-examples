@@ -1,0 +1,4 @@
+squares: [1, 4, 9, 16, 25]
+right triangles: [(3, 4, 5), (5, 12, 13), (6, 8, 10), (8, 15, 17), (9, 12, 15), (12, 16, 20)]
+name lengths: [3, 5]
+first odd squares: [1, 9, 25, 49]
