@@ -114,11 +114,11 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "Run functional",
+            "label": "Run the example open in the editor",
             "type": "shell",
             "command": "dotnet run",
             "options": {
-                "cwd": "${workspaceFolder}/examples/functional"
+                "cwd": "${fileDirname}"
             },            
             "group": {
                 "kind": "build",
