@@ -1,6 +1,6 @@
 use IO.Std.write_line
 
-// Expression bodied functions and some support for
+// expression bodied functions and some support for
 // expression oriented programming help in writing
 // pure functions
 let list = [1, 2, 3, 4, 5]

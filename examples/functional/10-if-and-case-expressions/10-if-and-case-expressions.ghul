@@ -1,8 +1,6 @@
 use IO.Std.write_line
 
-// an if-then-else-fi can stand in expression position: both
-// branches produce a value, and the result type is whatever type
-// is compatible with both:
+// if is an expression: its value is the value of the branch that runs:
 let parity =
     n =>
         if n % 2 == 0 then
@@ -14,9 +12,8 @@ let parity =
 write_line("parity(10): {parity(10)}")
 write_line("parity(11): {parity(11)}")
 
-// case does the same job and reads cleaner with more arms. an
-// arm can match several values at once. an expression-position
-// case requires an else arm:
+// case works the same way when there are more choices. an arm can
+// match several values, and the else arm covers the rest:
 let describe =
     n =>
         case n

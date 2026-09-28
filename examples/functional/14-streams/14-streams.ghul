@@ -9,34 +9,27 @@ use Ghul.Pipes.index
 use STREAM.DONE
 
 // stream(initial, advance) builds a lazy sequence, a T{}, from a start state and
-// a step function S -> STREAM[T, S]. The step returns DONE to stop, or
+// a step function S -> STREAM[T, S]. the step returns DONE to stop, or
 // value || next_state to yield the next value.
 
 // count down from n to 1:
 let counting = n =>
     stream(n, i => if i == 0 then DONE else i || (i - 1) fi)
 
-// infinite fibonacci. State is (prev, current); output is the
-// current value - state and output types are different.
-// the step's parameter destructures the state tuple, so the fields
-// are read by name: the outer parentheses are the parameter list, the
-// inner ones the pattern.
+// infinite fibonacci, with the last two numbers as the state:
 let fibonacci = stream(
     (prev = 1, current = 1),
-    ((prev, current)) => current || (prev = current, current = prev + current)
+    (prev, current) => current || (prev = current, current = prev + current)
 )
 
-// factorial. State is (n, prev); output is int.
+// factorial, with the count and the last value as the state:
 let factorial = stream(
     (n = 1, prev = 1),
-    ((n, prev)) => let next_n = n + 1, next = prev * next_n in
+    (n, prev) => let next_n = n + 1, next = prev * next_n in
         next || (n = next_n, prev = next)
 )
 
-// chars-of-a-string: state is an int index, output is char.
-// the canonical "state type differs from output type" example -
-// input is closed over by the anonymous function, integer state is hidden
-// inside the resulting char{} sequence.
+// the characters of a string, with an index as the state:
 let chars_of = s =>
     let xs = s.to_char_array() in
     stream(0, i => if i == xs.count then DONE else xs[i] || (i + 1) fi)
