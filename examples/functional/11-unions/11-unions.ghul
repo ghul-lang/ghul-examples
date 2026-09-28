@@ -1,0 +1,86 @@
+use IO.Std.write_line
+
+union Option[T] is
+    NONE
+    SOME(value: T)
+si
+
+union List[T] is
+    NIL
+    CONS(head: T, tail: List[T])
+si
+
+union Tree[T] is
+    LEAF(value: T)
+    NODE(left: Tree[T], right: Tree[T])
+si
+
+use Option.SOME
+use Option.NONE
+use List.NIL
+use List.CONS
+use Tree.LEAF
+use Tree.NODE
+
+list_example[T](elements: Collections.List[T]) -> string =>
+    assert elements.count == 3 else "expected 3 elements" in
+
+    let
+        list = CONS(elements[0], CONS(elements[1], CONS(elements[2], NIL))),
+        stringify_list = l rec =>
+            if let (head, tail): CONS = l then
+                "{head}, {rec(tail)}"
+            else
+                "nil"
+            fi
+    in
+        stringify_list(list)
+
+tree_example[T](leaves: Collections.List[T]) -> string =>
+    assert leaves.count == 4 else "expected 4 leaves" in
+
+    let tree =
+        NODE(
+            NODE(
+                LEAF(leaves[0]),
+                LEAF(leaves[1])
+            ),
+            NODE(
+                LEAF(leaves[2]),
+                LEAF(leaves[3])
+            )
+        )
+    in
+
+    let stringify_tree = t rec =>
+        if let (left, right): NODE = t then
+            // if it's a NODE, recursively stringify the
+            // left and right subtrees
+            "({rec(left)}, {rec(right)})"
+        else
+            // if it's not a NODE, it must be a LEAF, so
+            // stringify the value
+            "{t.value}"
+        fi
+    in
+
+    stringify_tree(tree)
+
+let some_int = SOME(42)
+let none_int = NONE
+
+// isa SOME(o) tests the variant and narrows o to it, so o.value is reachable
+let stringify_option = o rec =>
+    if isa SOME(o) then
+        "{o.value}"
+    else
+        "none"
+    fi
+
+write_line(stringify_option(some_int))
+write_line(stringify_option(none_int))
+
+write_line(list_example([1, 2, 3]))
+write_line(list_example(["A", "B", "C"]))
+write_line(tree_example([1, 2, 3, 4]))
+write_line(tree_example(["A", "B", "C", "D"]))

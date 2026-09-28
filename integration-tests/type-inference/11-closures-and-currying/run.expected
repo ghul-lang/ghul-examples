@@ -1,0 +1,4 @@
+add_5(3): 8
+add_5(20): 25
+times_7(6): 42
+boxed.value: 42

@@ -1,0 +1,23 @@
+use IO.Std.write_line
+use Ghul.Pipes.map
+use Ghul.Pipes.filter
+use Ghul.Pipes.reduce
+
+// a function literal passed to a call takes its parameter types
+// from the function type the call expects.
+
+// map: x is an int, from the source's element type:
+let doubled = [1, 2, 3] |> map(x => x * 2)
+write_line("doubled: {doubled}")
+
+// filter: x is an int here too:
+let even = [1, 2, 3, 4, 5, 6] |> filter(x => x % 2 == 0)
+write_line("even: {even}")
+
+// reduce: acc comes from the seed, and x from the source:
+let sum = [1, 2, 3, 4, 5] |> reduce(0, (acc, x) => acc + x)
+write_line("sum: {sum}")
+
+// each call in a chain passes its types on to the next:
+let labelled = [1, 2, 3] |> map(n => "[{n}]") |> reduce("", (acc, s) => "{acc}{s}")
+write_line("labelled: {labelled}")

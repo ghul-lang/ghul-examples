@@ -1,0 +1,34 @@
+use IO.Std.write_line
+use Collections.LIST
+use Collections.MAP
+
+class BOX[T] is
+    value: T public
+
+    init() is si
+
+    set(v: T) is
+        value = v
+    si
+si
+
+// type arguments nothing else gives can come from how the value is used later.
+
+// T comes from the call to set:
+let b = BOX()
+b.set(42)
+write_line("b.value: {b.value}")
+
+// a list's element type comes from the calls to add:
+let xs = LIST()
+xs.add(1)
+xs.add(2)
+xs.add(3)
+write_line("xs: {xs |> $}, count: {xs.count}")
+
+// and a map's key and value types from assignments through its indexer:
+let m = MAP()
+m["one"] = 1
+m["two"] = 2
+m["three"] = 3
+write_line("m[\"two\"]: {m["two"]}, count: {m.count}")

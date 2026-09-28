@@ -1,0 +1,21 @@
+use IO.Std.write_line
+
+// a function literal's return type comes from its body:
+let to_message = (name: string, age: int) => "{name} is {age} years old"
+write_line(to_message("ghūl", 12))
+
+// and from its return statements where the body is a block. all three
+// return a string here:
+let summarise = (n: int) is
+    if n == 0 then
+        return "zero"
+    elif n > 0 then
+        return "positive"
+    else
+        return "negative"
+    fi
+si
+
+write_line("summarise(0): {summarise(0)}")
+write_line("summarise(7): {summarise(7)}")
+write_line("summarise(-3): {summarise(-3)}")

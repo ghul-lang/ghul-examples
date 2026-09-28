@@ -1,0 +1,62 @@
+name: Index
+
+# index.json is what ghul.dev's examples pages read, from the index branch. It
+# is generated from main rather than committed, so it always matches the
+# examples and their expected output.
+#
+# The index branch carries nothing but index.json, and each run replaces it
+# with a single commit, so its history stays one commit long.
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: index
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    name: Publish index.json
+
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:10.0
+
+    timeout-minutes: 10
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Restore .NET tools
+      run: dotnet tool restore
+
+    # Fails, rather than writing, when an example directory is missing from the
+    # generator's topic list, so a new example is never silently left out.
+    - name: Generate index.json
+      run: dotnet run --project tools/examples-index -- "$GITHUB_REF_NAME"
+
+    - name: Publish on the index branch
+      env:
+        REPOSITORY: ${{ github.repository }}
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SOURCE: ${{ github.sha }}
+      run: |
+        set -eu
+
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+        publish=$(mktemp -d)
+        cp index.json "$publish/"
+        cd "$publish"
+
+        git init -q -b index
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add index.json
+        git commit -q -m "index.json for $SOURCE"
+        git push -q --force "https://x-access-token:$TOKEN@github.com/$REPOSITORY.git" index

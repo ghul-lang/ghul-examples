@@ -1,0 +1,7 @@
+use IO.Std.write_line
+
+let f = i => i * 2
+
+let g = f
+
+write_line("g(123) is {g(123)}")

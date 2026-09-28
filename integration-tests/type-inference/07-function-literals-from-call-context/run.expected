@@ -1,0 +1,4 @@
+doubled: [2, 4, 6]
+even: [2, 4, 6]
+sum: 15
+labelled: [1][2][3]

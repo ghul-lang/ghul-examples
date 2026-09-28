@@ -14,6 +14,10 @@
     <!-- Terminator-free sources; error on CI so stray `;` cannot creep
          back in, warning locally. The per-test projects compile the same
          files via symlinks, so this umbrella is the single gate. -->
+    <!-- Each example piece is its own program of top-level statements; here,
+         where root_entry is the entry point, none of them runs. -->
+    <GhulOptions Include="--suppress top-level-statements-not-run" />
+
     <GhulOptions Include="--warn redundant-semicolon" />
     <GhulOptions Include="--warn-as-error redundant-semicolon" Condition="'$(CI)' != ''" />
   </ItemGroup>

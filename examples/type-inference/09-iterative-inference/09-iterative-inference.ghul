@@ -1,0 +1,15 @@
+use IO.Std.write_line
+use Ghul.Pipes.map
+
+// a function literal's parameter types can come from where it is used,
+// when its body alone doesn't say what they are:
+
+let add = (x: int, y: int) => x + y
+
+// y has no written type, and is an int because it's passed to add:
+let add_5 = y => add(5, y)
+write_line("add_5(3): {add_5(3)}")
+
+// s is a string, from the list it is mapped over:
+let lengths = ["one", "fourteen", "five"] |> map(s => s.length)
+write_line("lengths: {lengths}")

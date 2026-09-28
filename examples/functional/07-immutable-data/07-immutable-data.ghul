@@ -1,0 +1,14 @@
+use IO.Std.write_line
+use Ghul.Pipes.map
+
+// immutable data structures
+let list = [1, 2, 3, 4, 5]
+
+let doubled = list |> map(x => x * 2)
+
+// original list is still the same:
+write_line("list: {list |> $}")
+
+// pure functions
+let add = (x, y) => x + y
+write_line("add(5, 3): {add(5, 3)}")

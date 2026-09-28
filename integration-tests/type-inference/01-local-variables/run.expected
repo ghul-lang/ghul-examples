@@ -1,0 +1,6 @@
+an_int is a System.Int32
+a_single is a System.Single
+a_double is a System.Double
+a_string is a System.String
+a_char is a System.Char
+a_bool is a System.Boolean

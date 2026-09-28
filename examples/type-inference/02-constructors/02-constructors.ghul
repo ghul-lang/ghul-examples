@@ -1,0 +1,20 @@
+use IO.Std.write_line
+
+class BOX[T](value: T)
+class PAIR[A, B](first: A, second: B)
+
+// a generic class's type arguments come from its constructor's arguments:
+let int_box = BOX(42)
+let string_box = BOX("hello")
+let pair = PAIR(123, "hello")
+
+write_line("int_box.value: {int_box.value}")
+write_line("string_box.value: {string_box.value}")
+write_line("pair: ({pair.first}, {pair.second})")
+
+// inference nests through the call tree:
+let nested = BOX(BOX(7))
+write_line("nested.value.value: {nested.value.value}")
+
+let mixed = PAIR(BOX(1), BOX("two"))
+write_line("mixed: ({mixed.first.value}, {mixed.second.value})")

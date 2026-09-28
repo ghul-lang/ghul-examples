@@ -1,0 +1,47 @@
+use IO.Std.write_line
+use Ghul.Pipes.STREAM
+use Ghul.Pipes.stream
+use Ghul.Pipes.filter
+use Ghul.Pipes.take
+use Ghul.Pipes.zip
+use Ghul.Pipes.index
+
+use STREAM.DONE
+
+// stream(initial, advance) builds a lazy sequence, a T{}, from a start state and
+// a step function S -> STREAM[T, S]. the step returns DONE to stop, or
+// value || next_state to yield the next value.
+
+// count down from n to 1:
+let counting = n =>
+    stream(n, i => if i == 0 then DONE else i || (i - 1) fi)
+
+// infinite fibonacci, with the last two numbers as the state:
+let fibonacci = stream(
+    (prev = 1, current = 1),
+    (prev, current) => current || (prev = current, current = prev + current)
+)
+
+// factorial, with the count and the last value as the state:
+let factorial = stream(
+    (n = 1, prev = 1),
+    (n, prev) => let next_n = n + 1, next = prev * next_n in
+        next || (n = next_n, prev = next)
+)
+
+// the characters of a string, with an index as the state:
+let chars_of = s =>
+    let xs = s.to_char_array() in
+    stream(0, i => if i == xs.count then DONE else xs[i] || (i + 1) fi)
+
+write_line("counting down from 5: {counting(5)}")
+write_line("chars of hello: {chars_of("hello")}")
+
+write_line("first 10 fibonacci numbers: {fibonacci |> take(10)}")
+write_line("first 10 factorial numbers: {factorial |> take(10)}")
+write_line("first 10 even fibonacci numbers: {fibonacci |> filter(x => x % 2 == 0) |> take(10)}")
+
+for (i, (fib, fact)) in fibonacci |> zip(factorial) |> take(10) |> index() do
+    write_line("fibonacci {i} is {fib}")
+    write_line("factorial {i} is {fact}")
+od

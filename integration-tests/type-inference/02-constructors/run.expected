@@ -1,0 +1,5 @@
+int_box.value: 42
+string_box.value: hello
+pair: (123, hello)
+nested.value.value: 7
+mixed: (1, two)

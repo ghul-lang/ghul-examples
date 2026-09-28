@@ -1,0 +1,21 @@
+use IO.Std.write_line
+
+class BOX[T](value: T)
+
+make_multiplier(n: int) -> int -> int =>
+    x => x * n
+
+// a comes from curried_add(5), and b from add_5(3):
+let curried_add = a => b => a + b
+let add_5 = curried_add(5)
+write_line("add_5(3): {add_5(3)}")
+write_line("add_5(20): {add_5(20)}")
+
+// make_multiplier returns a closure that captures n:
+let times_7 = make_multiplier(7)
+write_line("times_7(6): {times_7(6)}")
+
+// BOX's T comes from n, and make_box's return type from BOX:
+let make_box = n => BOX(n)
+let boxed = make_box(42)
+write_line("boxed.value: {boxed.value}")

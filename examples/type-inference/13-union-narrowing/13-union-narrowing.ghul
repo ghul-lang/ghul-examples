@@ -1,0 +1,21 @@
+use IO.Std.write_line
+
+union Shape is
+    CIRCLE(radius: double)
+    SQUARE(side: double)
+si
+
+use Shape.CIRCLE
+use Shape.SQUARE
+
+describe(s: Shape) -> string =>
+    if isa CIRCLE(s) then
+        // s is narrowed to CIRCLE here, so .radius is accessible:
+        "circle of radius {s.radius}"
+    else
+        // two variants, so the else branch narrows s to SQUARE, and .side is accessible:
+        "square of side {s.side}"
+    fi
+
+write_line(describe(CIRCLE(3.0D)))
+write_line(describe(SQUARE(4.0D)))

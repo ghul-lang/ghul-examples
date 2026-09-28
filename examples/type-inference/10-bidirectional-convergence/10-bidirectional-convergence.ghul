@@ -1,0 +1,6 @@
+use IO.Std.write_line
+
+// x's type comes from both the body, which reads x.length, and the
+// call, which passes a string. neither is enough on its own:
+let f = x => x.length
+write_line("f(\"hello\"): {f("hello")}")

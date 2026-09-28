@@ -1,0 +1,5 @@
+classifyNumber(-10): Negative even and multiple of 5
+classifyNumber(-3): Negative odd
+classifyNumber(0): Zero
+classifyNumber(4): Positive even
+classifyNumber(25): Positive odd and multiple of 5

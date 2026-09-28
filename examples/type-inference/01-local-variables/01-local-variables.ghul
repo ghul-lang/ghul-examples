@@ -1,0 +1,16 @@
+use IO.Std.write_line
+
+// a let variable takes its type from its initializer:
+let an_int = 42
+let a_single = 3.14s
+let a_double = 3.14D
+let a_string = "hello"
+let a_char = 'g'
+let a_bool = true
+
+write_line("an_int is a {an_int.get_type()}")
+write_line("a_single is a {a_single.get_type()}")
+write_line("a_double is a {a_double.get_type()}")
+write_line("a_string is a {a_string.get_type()}")
+write_line("a_char is a {a_char.get_type()}")
+write_line("a_bool is a {a_bool.get_type()}")
