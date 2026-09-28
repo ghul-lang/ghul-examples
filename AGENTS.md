@@ -34,7 +34,8 @@ All builds and integration tests must succeed before opening a pull request.
 
 ### Integration Test Notes
 
-- There is normally **one** test folder per example project.
+- There is normally **one** test folder per example project. An example split into pieces has one project and one test folder per piece: `examples/<example>/<NN-name>/` and `integration-tests/<example>/<NN-name>/`.
+- Each piece is a file of top-level statements with no namespace, so it is its own program. The umbrella `examples.ghulproj` compiles every piece with `root_entry` as the entry point, which is why it suppresses `top-level-statements-not-run`.
 - Tests typically assert that the program's text output exactly matches the expected output file.
 - Source files under `examples/` are symlinked into their corresponding test folder. Preserve these symlinks when modifying or adding tests.
 - When you create a new example you must also create a matching test folder that symlinks to the example sources.
