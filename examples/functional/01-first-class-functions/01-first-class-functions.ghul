@@ -1,7 +1,5 @@
 use IO.Std.write_line
 
-// a function is a value like any other: it can be held in a variable and
-// passed around
 let f = i => i * 2
 
 let g = f

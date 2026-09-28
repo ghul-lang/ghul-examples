@@ -19,6 +19,6 @@ odd = n => if n == 0 then false else even(n - 1) fi
 write_line("even(10): {even(10)}")
 write_line("odd(10): {odd(10)}")
 
-// mutual recursion with named functions doesn't require any workarounds:
+// mutual recursion with named functions, doesn't require any workarounds:
 named_even(n: int) -> bool => if n == 0 then true else named_odd(n - 1) fi
 named_odd(n: int) -> bool => if n == 0 then false else named_even(n - 1) fi

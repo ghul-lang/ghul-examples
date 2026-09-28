@@ -3,12 +3,12 @@ use Ghul.Pipes.map
 
 // inference is iterative: information flows both into and out of a
 // lambda's body, so use-site context can determine a lambda's
-// parameter types when its body alone wouldn't be enough.
+// parameter types when its body alone wouldn't be enough:
 
 // add's signature pins x and y to int:
 let add = (x: int, y: int) => x + y
 
-// y has no explicit type, but it's passed to add as the second
+// here y has no explicit type but it's passed to add as the second
 // argument, so its type is inferred from add's signature:
 let add_5 = y => add(5, y)
 write_line("add_5(3): {add_5(3)}")

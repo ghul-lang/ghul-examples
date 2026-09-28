@@ -1,4 +1,4 @@
-// an expression-bodied function, with let ... in naming an intermediate value
+// expression bodied functions and let-in
 expression_body_example(a: int, b: int) -> string =>
     let sum = a + b in
     if sum > 10 then

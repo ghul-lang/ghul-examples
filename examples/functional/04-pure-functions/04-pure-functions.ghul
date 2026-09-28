@@ -1,7 +1,8 @@
 use IO.Std.write_line
 
-// expression-bodied functions and expression-oriented code help in
-// writing pure functions
+// Expression bodied functions and some support for
+// expression oriented programming help in writing
+// pure functions
 let list = [1, 2, 3, 4, 5]
 
 // lists can be subscripted to read an element at a given index
@@ -9,7 +10,7 @@ let element_3 = list[3]
 
 // but lists are immutable, so this will cause a compile time
 // error if uncommented:
-// list[3] = 10
+// list[3] = 10;
 
 let tuple = (1, 2, 3, 4, 5)
 
@@ -20,7 +21,7 @@ let (a, b, c, d, e) = tuple
 let first = tuple.`1
 
 // but tuples are immutable, so members cannot be assigned to:
-// tuple.`1 = 10 // compile time error
+// tuple.`1 = 10; // compile time error
 
 let classify = n =>
     if n == 0 then

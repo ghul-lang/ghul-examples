@@ -14,13 +14,18 @@ si
 
 // when a let variable of a generic type has no type arguments
 // and no initializer to fix them, the compiler resolves the type
-// from later operations on the value. T is resolved from the .set()
-// call below; the no-argument constructor doesn't pin it:
+// from later operations on the value. The mechanism is general —
+// it applies to any generic type, not just standard collections:
+
+// a user-defined generic class. T is resolved from the .set()
+// call below — there's no [int] written anywhere, and the
+// no-arg constructor doesn't pin T either:
 let b = BOX()
 b.set(42)
 write_line("b.value: {b.value}")
 
-// standard collections work the same way - T from .add() calls:
+// standard collections work via exactly the same mechanism —
+// T from .add() calls:
 let xs = LIST()
 xs.add(1)
 xs.add(2)

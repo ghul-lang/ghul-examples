@@ -1,9 +1,12 @@
 use IO.Std.write_line
 
-// a higher-order, generically typed global function:
+// higher-order functions:
+
+// higher-order generically typed global functions:
 apply[T](f: T -> T, x: T) -> T =>
     f(x)
 
+// higher order non-genericly typed anonymous functions:
 let times_2 = x => x * 2
 write_line("apply(times_2, 5): {apply(times_2, 5)}")
 

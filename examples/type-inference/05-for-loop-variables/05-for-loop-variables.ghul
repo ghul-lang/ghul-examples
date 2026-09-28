@@ -1,6 +1,6 @@
 use IO.Std.write_line
 
-// loop variables get their type from the iterable being looped over.
+// loop variables get their type from the iterable being looped over:
 // i: int from the range:
 for i in 1::3 do
     write_line("range value i: {i}")

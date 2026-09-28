@@ -3,9 +3,10 @@ use Ghul.Pipes.map
 use Ghul.Pipes.filter
 use Ghul.Pipes.reduce
 
-// when a lambda is passed as an argument and the call site's formal
-// parameter is a function type, the lambda's parameter types are
-// inferred from that signature.
+// when a lambda is passed as an argument and the call site's
+// formal parameter is a function type, the lambda's parameter
+// types are inferred from that signature. The thread-first operator
+// |> is one common way to write such call sites:
 
 // map[T,U](source: Iterable[T], mapper: T -> U) - x: int comes from the source element type:
 let doubled = [1, 2, 3] |> map(x => x * 2)

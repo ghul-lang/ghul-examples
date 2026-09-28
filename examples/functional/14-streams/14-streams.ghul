@@ -34,8 +34,9 @@ let factorial = stream(
 )
 
 // chars-of-a-string: state is an int index, output is char.
-// the input is closed over by the anonymous function, and the integer
-// state is hidden inside the resulting char{} sequence.
+// the canonical "state type differs from output type" example -
+// input is closed over by the anonymous function, integer state is hidden
+// inside the resulting char{} sequence.
 let chars_of = s =>
     let xs = s.to_char_array() in
     stream(0, i => if i == xs.count then DONE else xs[i] || (i + 1) fi)

@@ -7,7 +7,7 @@ use IO.Std.write_line
 let times_2 = x => x * 2
 let add_1 = x => x + 1
 
-// use the new >> operator to compose functions:
+// use our new >> operator to compose functions:
 let times_2_then_add_1 = times_2 >> add_1
 write_line("times_2_then_add_1(5): {times_2_then_add_1(5)}")
 
