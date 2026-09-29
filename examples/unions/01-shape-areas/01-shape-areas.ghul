@@ -1,0 +1,36 @@
+use IO.Std.write_line
+
+// a union holds one of a fixed set of variants. the fields in its header are
+// shared by every variant, which takes them with '..'. a variant with no
+// fields of its own can leave out the parentheses and the '..'.
+union Shape(name: string) is
+    RECTANGLE(.., width: int, height: int)
+    SQUARE(.., side: int)
+    POINT
+si
+
+use Shape.RECTANGLE
+use Shape.SQUARE
+use Shape.POINT
+
+// methods are added to a union in a partial block. this case covers every
+// variant, so it doesn't need an else arm.
+partial Shape is
+    area() -> int =>
+        case self
+        when r: RECTANGLE then r.width * r.height
+        when s: SQUARE then s.side * s.side
+        when _: POINT then 0
+        esac
+si
+
+let shapes = [
+    RECTANGLE("billboard", 6, 3),
+    SQUARE("tile", 4),
+    POINT("pixel")
+]
+
+for shape in shapes do
+    // name is a shared field, readable on any variant
+    write_line("{shape.name} has area {shape.area()}")
+od

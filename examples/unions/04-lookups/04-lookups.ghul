@@ -1,0 +1,27 @@
+use IO.Std.write_line
+
+// a union with a single field-carrying variant is option shaped: '?'
+// tests for that variant and '!' unwraps its field.
+union Lookup is
+    FOUND(port: int)
+    MISSING
+si
+
+use Lookup.FOUND
+use Lookup.MISSING
+
+find_port(scheme: string) -> Lookup is
+    if scheme == "http" then return FOUND(80); fi
+
+    return MISSING
+si
+
+port_message(scheme: string, result: Lookup) -> string =>
+    if result? then
+        "{scheme} is on port {result!}"
+    else
+        "{scheme} has no known port"
+    fi
+
+write_line(port_message("http", find_port("http")))
+write_line(port_message("smtp", find_port("smtp")))
