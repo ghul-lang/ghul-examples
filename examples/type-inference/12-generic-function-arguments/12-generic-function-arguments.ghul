@@ -1,6 +1,6 @@
 use IO.Std.write_line
 
-// a generic global function's type arguments come from its arguments,
+// the type arguments come from the arguments,
 // so [T] is not normally needed at the call site:
 apply[T](f: T -> T, x: T) -> T => f(x)
 transform[A, B](f: A -> B, x: A) -> B => f(x)
