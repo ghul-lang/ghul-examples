@@ -1,0 +1,16 @@
+use IO.Std.write_line
+
+lookup_port(scheme: string) -> int? =>
+    case scheme
+    when "http" then 80
+    when "https" then 443
+    when "ssh" then 22
+    else null
+    esac
+
+// '??' gives a fallback for an absent value, and only evaluates it when
+// it's needed. a chain of them stays optional until a value that isn't
+// optional ends it, here the literal 21:
+let ftp_port = lookup_port("ftp") ?? lookup_port("ftps") ?? 21
+
+write_line("ftp falls back to port {ftp_port}")

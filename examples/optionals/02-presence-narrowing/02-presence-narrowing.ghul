@@ -1,0 +1,17 @@
+use IO.Std.write_line
+
+lookup_port(scheme: string) -> int? =>
+    case scheme
+    when "http" then 80
+    when "https" then 443
+    when "ssh" then 22
+    else null
+    esac
+
+let ssh = lookup_port("ssh")
+
+// the '?' presence test narrows the optional to non-optional for
+// the rest of the branch, so it reads without any unwrapping
+if ssh? then
+    write_line("ssh listens on port {ssh}")
+fi

@@ -1,0 +1,14 @@
+use IO.Std.write_line
+
+// manager is optional: the head of the tree reports to nobody
+class EMPLOYEE(name: string, manager: EMPLOYEE?)
+
+let ceo = EMPLOYEE("Ada", null)
+let lead = EMPLOYEE("Bjarne", ceo)
+let dev = EMPLOYEE("Grace", lead)
+
+// '?.' reads a member when there is a value, and gives null when there
+// isn't, so a chain stops at the first absent value. '??' then gives a
+// plain string:
+write_line("Grace's skip manager is {dev.manager?.manager?.name ?? "nobody"}")
+write_line("Bjarne's skip manager is {lead.manager?.manager?.name ?? "nobody"}")
