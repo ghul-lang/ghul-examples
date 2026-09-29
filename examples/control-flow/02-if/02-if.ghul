@@ -1,0 +1,12 @@
+use IO.Std.write_line
+
+if true then
+    assert true
+    write_line("true is {true}")
+fi
+
+if false \/ true then
+    write_line("false or-else true is {false \/ true}")
+else
+    assert false
+fi
