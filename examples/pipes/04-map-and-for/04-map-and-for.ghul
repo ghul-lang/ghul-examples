@@ -1,0 +1,25 @@
+use IO.Std.write_line
+use Ghul.Pipes
+
+// map transforms elements according to a supplied function:
+let times_3 = [1, 2, 3, 4, 5, 6, 7, 8] |> map(i => i * 3)
+write_line("times 3: {times_3}")
+
+// if you hover the mouse over the call to map, you'll see the full inferred function signature:
+let strings = 1..9 |> map(i => "'{i}'")
+write_line("map to strings: {strings}")
+
+let strings_with_lengths =
+    ["one", "two", "three", "four", "horse", "weevil", "six"] |>
+        map(s => (s, s.length))
+
+write_line("strings with lengths: {strings_with_lengths}")
+
+// pipes are iterable, so you can loop over them with 'for':
+for (position, value) in [1, 2, 3] |> map(i => i * 3) |> index() do
+    write_line("result #{position + 1} is {value}")
+od
+
+// strings are iterable:
+let upper = "hello world" |> map(c => char.to_upper(c)) |> join("")
+write_line("upper cased: '{upper}'")

@@ -1,0 +1,11 @@
+use IO.Std.write_line
+use Ghul.Pipes
+
+// reduce accumulates a running value according to a supplied function:
+let folded = [1, 2, 3, 4, 5, 6, 7, 8] |> reduce(0, (r, e) => r + e)
+write_line("sum with reduce: {folded}")
+
+// sum and product total a sequence without a starting value:
+let total = [1, 2, 3, 4, 5, 6, 7, 8] |> sum()
+let factorial = 1::6 |> product()
+write_line("sum is: {total}, 6! is: {factorial}")

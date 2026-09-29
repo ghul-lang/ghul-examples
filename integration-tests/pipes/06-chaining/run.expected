@@ -1,0 +1,6 @@
+count of elements > 3 is: 5
+sum of doubled odd numbers is: 32
+take first 3: [1, 2, 3]
+skip first 3: [4, 5, 6, 7, 8]
+take 3 from the middle: [4, 5, 6]
+sum of 3 from the middle: 15

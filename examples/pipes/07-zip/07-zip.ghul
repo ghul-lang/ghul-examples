@@ -1,0 +1,17 @@
+use IO.Std.write_line
+use Ghul.Pipes
+
+// zip combines two sequences into a single sequence of pairs/2-tuples
+let zipped =
+    [1, 2, 3, 4, 5, 6, 7, 8] |>
+        zip([8, 7, 6, 5, 4, 3, 2, 1])
+
+write_line("zip of two sequences is: {zipped}")
+
+// or into a sequence where each element is derived by passing the
+// left + right elements to a supplied function:
+let zip_map =
+    [1, 2, 3, 4, 5, 6, 7, 8] |>
+        zip([8, 7, 6, 5, 4, 3, 2, 1], (l, r) => l + r)
+
+write_line("sum of zipped is: {zip_map}")
