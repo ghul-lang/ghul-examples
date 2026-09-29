@@ -1,0 +1,21 @@
+use IO.Std.write_line
+
+union SHAPE is
+    CIRCLE(radius: double)
+    SQUARE(side: double)
+    TRIANGLE(base: double, height: double)
+si
+
+write_line(describe_shape(SHAPE.CIRCLE(20.0D)))
+write_line(describe_shape(SHAPE.CIRCLE(2.0D)))
+write_line(describe_shape(SHAPE.SQUARE(3.0D)))
+
+describe_shape(s: SHAPE) -> string =>
+    // the same guard works on a case arm; the bound name (c) and the
+    // scrutinee narrowing are both in scope in the guard and the body
+    case s
+    when c: SHAPE.CIRCLE /\ c.radius > 10.0D then "large circle"
+    when c: SHAPE.CIRCLE then "circle radius {c.radius}"
+    when q: SHAPE.SQUARE then "square side {q.side}"
+    when t: SHAPE.TRIANGLE then "triangle base {t.base}"
+    esac

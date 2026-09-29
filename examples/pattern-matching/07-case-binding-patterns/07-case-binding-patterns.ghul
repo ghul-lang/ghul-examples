@@ -1,0 +1,34 @@
+use IO.Std.write_line
+
+write_line("area of a circle: {area(SHAPE.CIRCLE(2.0D))}")
+write_line("area of a square: {area(SHAPE.SQUARE(3.0D))}")
+write_line("area of a triangle: {area(SHAPE.TRIANGLE(4.0D, 5.0D))}")
+
+write_line(is_round(SHAPE.CIRCLE(2.0D)))
+write_line(is_round(SHAPE.SQUARE(3.0D)))
+
+area(s: SHAPE) -> double =>
+    // SHAPE is a closed union with three variants, all covered here,
+    // so this case expression is exhaustive without an else arm
+    case s
+    when c: SHAPE.CIRCLE then 3.14159D * c.radius * c.radius
+    when q: SHAPE.SQUARE then q.side * q.side
+    when t: SHAPE.TRIANGLE then 0.5D * t.base * t.height
+    esac
+
+is_round(s: SHAPE) -> string =>
+    // when _: T narrows the scrutinee itself without binding a new
+    // name, so s reads as SHAPE.CIRCLE inside this arm
+    case s
+    when _: SHAPE.CIRCLE then "round, radius {s.radius}"
+    else "not round"
+    esac
+
+// case over a union: when v: T gives v the variant's type for the rest
+// of the arm
+
+union SHAPE is
+    CIRCLE(radius: double)
+    SQUARE(side: double)
+    TRIANGLE(base: double, height: double)
+si

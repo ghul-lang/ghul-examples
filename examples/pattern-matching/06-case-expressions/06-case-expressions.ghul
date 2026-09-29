@@ -1,0 +1,44 @@
+use IO.Std.write_line
+
+write_line("describe(-1): {describe_int(-1)}")
+write_line("describe(2): {describe_int(2)}")
+write_line("describe(7): {describe_int(7)}")
+write_line("describe(42): {describe_int(42)}")
+
+write_line(classify((0, 0)))
+write_line(classify((0, 5)))
+write_line(classify((3, 0)))
+write_line(classify((3, 4)))
+
+describe_int(n: int) -> string =>
+    // case expression matches on the value of n
+    case n
+    when -1 then
+        "minus one"
+    when 0 then
+        "zero"
+    when 1, 2, 3 then
+        "small"
+    when 4, 5, 6 then
+        "medium"
+    when 7, 8, 9 then
+        "large"
+    when 13 then
+        "unlucky"
+    else
+        "other"
+    esac
+
+classify(p: (int, int)) -> string =>
+    // case expressions support the same patterns as if let
+    // so we can destructure the value and match on the elements
+    case p
+    when (0, 0) then
+        "origin"
+    when (0, y) then
+        "on y axis at {y}"
+    when (x, 0) then
+        "on x axis at {x}"
+    when (x, y) then
+        "({x}, {y})"
+    esac

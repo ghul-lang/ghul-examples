@@ -1,0 +1,8 @@
+describe(-1): minus one
+describe(2): small
+describe(7): large
+describe(42): other
+origin
+on y axis at 5
+on x axis at 3
+(3, 4)

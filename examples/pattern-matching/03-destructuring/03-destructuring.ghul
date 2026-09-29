@@ -1,0 +1,29 @@
+use IO.Std.write_line
+
+write_line(show(SCORE("Alice", 10)))
+write_line(show(null))
+write_line(show(pick_winner(SCORE("Bob", 99), SCORE("Alice", 10))))
+write_line(show(pick_winner(SCORE("Alice", 99), SCORE("Bob", 99))))
+
+show(score: SCORE?) -> string =>
+    if let (who, points) = score then
+        "{who} scored {points}"
+    else
+        "no score"
+    fi
+
+// pick the higher scorer, or null for a draw
+pick_winner(a: SCORE, b: SCORE) -> SCORE? =>
+    let
+        (_, a_points) = a,
+        (_, b_points) = b
+    in
+        if a_points > b_points then
+            a
+        elif b_points > a_points then
+            b
+        else
+            null
+        fi
+
+class SCORE(who: string, points: int)

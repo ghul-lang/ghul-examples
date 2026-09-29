@@ -1,0 +1,54 @@
+use IO.Std.write_line
+
+// case compares its value with each label the way =~ does, so strings,
+// optionals and types that declare =~ match by value, not by reference
+
+class POINT is
+    x: int
+    y: int
+
+    init(x: int, y: int) is
+        self.x = x
+        self.y = y
+    si
+
+    =~(other: POINT) -> bool => x == other.x /\ y == other.y
+    get_hash_code() -> int => x * 397 + y
+si
+
+classify_point(p: POINT) -> string =>
+    case p
+    when POINT(0, 0) then "origin"
+    else "elsewhere"
+    esac
+
+describe_day(name: string) -> string =>
+    case name
+    when "Mon", "Tue", "Wed", "Thu", "Fri" then "weekday"
+    when "Sat", "Sun" then "weekend"
+    else "not a day"
+    esac
+
+label_optional(n: int?) -> string =>
+    // a when null label matches an absent value
+    case n
+    when 42 then "forty-two"
+    when null then "nothing"
+    else "something else"
+    esac
+
+// built at runtime, so it's a different string object to the
+// literal "Sat" below - case still matches it by content
+let prefix = "S"
+let built = "{prefix}at"
+
+write_line(describe_day(built))
+write_line(describe_day("Mon"))
+
+// two different POINT instances, equal by =~
+write_line(classify_point(POINT(0, 0)))
+write_line(classify_point(POINT(1, 1)))
+
+write_line(label_optional(42))
+write_line(label_optional(null))
+write_line(label_optional(7))
