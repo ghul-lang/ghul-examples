@@ -1,0 +1,23 @@
+use IO.Std.write_line
+use Collections.Iterable
+
+count_up_to(n: int) -> int{} is
+    let i mut = 1
+    while i <= n do
+        yield i
+        i = i + 1
+    od
+si
+
+// generators compose: this one reads another sequence and yields a running
+// total:
+running_totals(xs: Iterable[int]) -> int{} is
+    let total mut = 0
+    for x in xs do
+        total = total + x
+        yield total
+    od
+si
+
+// generators compose: running_totals consumes another generator
+write_line("totals:    {running_totals(count_up_to(5))}")
