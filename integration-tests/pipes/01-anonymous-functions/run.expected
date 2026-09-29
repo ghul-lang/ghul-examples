@@ -1,0 +1,5 @@
+f(123) = i is 123
+g(456) = j is 456
+h(789) = k is 789
+captured values: i is 111, j is 222, k is 333
+call inner() returned by outer(): hello

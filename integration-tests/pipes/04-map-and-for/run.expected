@@ -1,0 +1,7 @@
+times 3: [3, 6, 9, 12, 15, 18, 21, 24]
+map to strings: ['1', '2', '3', '4', '5', '6', '7', '8']
+strings with lengths: [(one, 3), (two, 3), (three, 5), (four, 4), (horse, 5), (weevil, 6), (six, 3)]
+result #1 is 3
+result #2 is 6
+result #3 is 9
+upper cased: 'HELLO WORLD'

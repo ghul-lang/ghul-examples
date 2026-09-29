@@ -1,0 +1,12 @@
+use IO.Std.write_line
+
+let i mut = 0
+
+while i < 10 do
+    assert i < 10
+    i = i + 1
+
+    write_line("loop iteration {i} out of 10")
+od
+
+assert i == 10

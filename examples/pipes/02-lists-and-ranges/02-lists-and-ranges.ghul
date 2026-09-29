@@ -1,0 +1,15 @@
+use IO.Std.write_line
+
+// '[' and ']' construct an immutable list (Collections.List[T], where T is inferred from the element type):
+let list = [1, 2, 3, 4, 5, 6]
+
+// '$' renders any Collections.Iterable[T] as a string:
+write_line("list: {list |> $}")
+
+// '..' constructs an iterable integer range, inclusive of the first element and exclusive of the last:
+let exclusive_range = 0..10
+write_line("exclusive int range: {exclusive_range |> $}")
+
+// '::' constructs an iterable integer range, inclusive of the first and last elements:
+let inclusive_range = 1::10
+write_line("inclusive int range: {inclusive_range |> $}")

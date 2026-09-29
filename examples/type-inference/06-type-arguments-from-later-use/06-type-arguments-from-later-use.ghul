@@ -19,14 +19,14 @@ let b = BOX()
 b.set(42)
 write_line("b.value: {b.value}")
 
-// a list's element type comes from the calls to add:
+// the element type comes from the calls to add:
 let xs = LIST()
 xs.add(1)
 xs.add(2)
 xs.add(3)
 write_line("xs: {xs |> $}, count: {xs.count}")
 
-// and a map's key and value types from assignments through its indexer:
+// and the key and value types from the assignments through the indexer:
 let m = MAP()
 m["one"] = 1
 m["two"] = 2

@@ -1,0 +1,8 @@
+count: 1
+count: 2
+count: 3
+count: 4
+count: 5
+squares:   [1, 4, 9, 16, 25]
+evens:     [2, 4, 6, 8, 10]
+first 3:   [1, 2, 3]

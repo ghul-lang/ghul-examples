@@ -1,0 +1,9 @@
+// assert tests a condition, and throws an exception if the condition does not hold:
+assert 1 == 1
+assert 3 > 2
+
+// the optional assert else clause supplies a message to include in any thrown exception:
+assert true else "who knows what to believe?"
+
+// or a specific object to throw:
+assert 1 < "hello".length else System.IndexOutOfRangeException()

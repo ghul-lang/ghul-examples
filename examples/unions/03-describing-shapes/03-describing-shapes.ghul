@@ -1,0 +1,41 @@
+use IO.Std.write_line
+
+union Shape(name: string) is
+    RECTANGLE(.., width: int, height: int)
+    SQUARE(.., side: int)
+    POINT
+si
+
+use Shape.RECTANGLE
+use Shape.SQUARE
+
+partial Shape is
+    area() -> int =>
+        case self
+        when r: RECTANGLE then r.width * r.height
+        when s: SQUARE then s.side * s.side
+        when _: POINT then 0
+        esac
+si
+
+// an impl block makes the union implement a trait without naming the trait
+// in the union's header. inside it, self is a Shape.
+trait Describable is
+    describe() -> string
+si
+
+impl Describable for Shape is
+    describe() -> string =>
+        "{name}: area {area()}"
+si
+
+// Shape implements Describable, so a Shape can be passed where a
+// Describable is expected
+let items = Collections.LIST[Describable]()
+
+items.add(SQUARE("stamp", 2))
+items.add(RECTANGLE("card", 5, 2))
+
+for item in items do
+    write_line(item.describe())
+od

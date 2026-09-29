@@ -1,0 +1,25 @@
+use IO.Std.write_line
+
+union Shape(name: string) is
+    RECTANGLE(.., width: int, height: int)
+    SQUARE(.., side: int)
+    POINT
+si
+
+use Shape.RECTANGLE
+use Shape.SQUARE
+use Shape.POINT
+
+label(shape: Shape) -> string =>
+    // isa V(x) tests the runtime variant and narrows x to it in the
+    // branch, so the variant's own fields become readable
+    if isa SQUARE(shape) then
+        "{shape.name} is a {shape.side}x{shape.side} square"
+    elif isa RECTANGLE(shape) then
+        "{shape.name} is a {shape.width}x{shape.height} rectangle"
+    else
+        "{shape.name} is a point"
+    fi
+
+write_line(label(SQUARE("badge", 2)))
+write_line(label(POINT("dot")))

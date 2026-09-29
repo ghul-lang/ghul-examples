@@ -1,0 +1,15 @@
+use IO.Std.write_line
+use Ghul.Pipes
+
+// a chain closes off into a collection by constructing one from it:
+let squares = 1::5 |> map(i => i * i) |> ARRAY()
+write_line("squares: {squares}")
+
+// and into text with string, which puts a separator between elements:
+let dashed = 1::5 |> string("-")
+write_line("dashed: {dashed}")
+
+// index() tags each element with its 0-based index in the sequence:
+let indexed = ["cat", "dog", "fish", "zebra", "ameoba"] |> index()
+
+write_line("indexed: {indexed}")

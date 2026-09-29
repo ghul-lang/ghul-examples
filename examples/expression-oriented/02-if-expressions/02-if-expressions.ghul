@@ -1,0 +1,15 @@
+use IO.Std.write_line
+
+// an if can be used as an expression: its value is the value of the
+// branch that runs:
+let n = 7
+
+let parity = if n % 2 == 0 then "even" else "odd" fi
+write_line("{n} is {parity}")
+
+let sign =
+    if n > 0 then "positive"
+    elif n < 0 then "negative"
+    else "zero"
+    fi
+write_line("sign: {sign}")

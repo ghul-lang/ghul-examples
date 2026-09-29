@@ -1,0 +1,22 @@
+use IO.Std.write_line
+
+union SHAPE is
+    CIRCLE(radius: double)
+    SQUARE(side: double)
+    TRIANGLE(base: double, height: double)
+si
+
+// a trailing '/\' guard adds a condition, checked after the pattern
+// matches. when it fails, the next clause is tried, as if the pattern
+// hadn't matched
+let a_shape: SHAPE = SHAPE.CIRCLE(5.0D)
+
+if let c: SHAPE.CIRCLE = a_shape /\ c.radius > 1.0D then
+    write_line("if let guard: big enough, radius {c.radius}")
+fi
+
+if let c: SHAPE.CIRCLE = a_shape /\ c.radius > 100.0D then
+    write_line("unreachable")
+else
+    write_line("if let guard: not big enough")
+fi

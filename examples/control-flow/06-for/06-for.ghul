@@ -1,0 +1,29 @@
+use IO.Std.write_line
+use Ghul.Pipes.index
+
+let count mut = 0
+
+for i in 0..10 do
+    assert i >= 0 /\ i < 10
+
+    write_line("i is {i}, count is {count}")
+
+    count = count + 1
+od
+
+assert count == 10
+
+// 0..10 is not for loop specific syntax, '..' is just an operator that constructs
+// an iterable integer range:
+
+let range = 0..100
+
+assert range.from == 0
+assert range.to == 100
+
+assert range |> Ghul.Pipes.count() == 100
+
+// for can iterate over anything that implements Iterable[T], Iterator[T], or move_next() and current:
+for ci in "hello" |> index() do
+    write_line("char {ci.index} of 'hello' is {ci.value}")
+od

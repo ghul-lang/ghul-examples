@@ -1,0 +1,12 @@
+use IO.Std.write_line
+
+// a parenthesised block is an expression: a sequence of statements whose
+// value is the value of the last one. it can be used anywhere a value
+// is needed:
+let hypotenuse_squared =
+    (
+        let a = 3
+        let b = 4
+        a * a + b * b
+    )
+write_line("3,4 -> {hypotenuse_squared}")

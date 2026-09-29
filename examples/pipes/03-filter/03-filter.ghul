@@ -1,0 +1,21 @@
+use IO.Std.write_line
+
+// Ghul.Pipes has a global function for every way of manipulating a sequence
+// of elements - map, filter, reduce, and so on:
+use Ghul.Pipes
+
+// the thread-first operator '|>' calls a function with the value on its left as
+// the first argument: 'x |> f(a)' is 'f(x, a)'. Chained, it reads left to right:
+// 'x |> f(a) |> g(b)' is 'g(f(x, a), b)'
+
+// filter passes only those elements that meet a supplied filter condition:
+let even = 1::8 |> filter(i => is_even(i))
+write_line("even numbers: {even}")
+
+// you generally don't need explicit argument types for anonymous functions when they're
+// passed as arguments, as their types can be inferred from context:
+let odd = [1, 2, 3, 4, 5, 6, 7, 8] |> filter(i => is_odd(i))
+write_line("odd numbers: {odd}")
+
+is_odd(i: int) -> bool => i & 1 != 0
+is_even(i: int) -> bool => i & 1 == 0

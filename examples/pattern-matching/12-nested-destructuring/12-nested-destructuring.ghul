@@ -1,0 +1,83 @@
+use IO.Std.write_line
+
+// patterns nest. this is Okasaki's red-black tree rebalance, which matches a
+// 4-tuple against enum values and variant patterns three levels deep
+
+enum COLOUR is
+    RED,
+    BLACK,
+si
+
+union TREE is
+    EMPTY
+    NODE(colour: COLOUR, left: TREE, value: int, right: TREE)
+si
+
+balance(colour: COLOUR, left: TREE, value: int, right: TREE) -> TREE =>
+    case (colour, left, value, right)
+    when (COLOUR.BLACK, (COLOUR.RED, (COLOUR.RED, a, x, b): TREE.NODE, y, c): TREE.NODE, z, d) then
+        TREE.NODE(COLOUR.RED, TREE.NODE(COLOUR.BLACK, a, x, b), y, TREE.NODE(COLOUR.BLACK, c, z, d))
+    when (COLOUR.BLACK, (COLOUR.RED, a, x, (COLOUR.RED, b, y, c): TREE.NODE): TREE.NODE, z, d) then
+        TREE.NODE(COLOUR.RED, TREE.NODE(COLOUR.BLACK, a, x, b), y, TREE.NODE(COLOUR.BLACK, c, z, d))
+    when (COLOUR.BLACK, a, x, (COLOUR.RED, (COLOUR.RED, b, y, c): TREE.NODE, z, d): TREE.NODE) then
+        TREE.NODE(COLOUR.RED, TREE.NODE(COLOUR.BLACK, a, x, b), y, TREE.NODE(COLOUR.BLACK, c, z, d))
+    when (COLOUR.BLACK, a, x, (COLOUR.RED, b, y, (COLOUR.RED, c, z, d): TREE.NODE): TREE.NODE) then
+        TREE.NODE(COLOUR.RED, TREE.NODE(COLOUR.BLACK, a, x, b), y, TREE.NODE(COLOUR.BLACK, c, z, d))
+    else
+        TREE.NODE(colour, left, value, right)
+    esac
+
+ins(t: TREE, v: int) -> TREE =>
+    if let (colour, left, value, right): TREE.NODE = t then
+        if v < value then
+            balance(colour, ins(left, v), value, right)
+        elif v > value then
+            balance(colour, left, value, ins(right, v))
+        else
+            t
+        fi
+    else
+        TREE.NODE(COLOUR.RED, TREE.EMPTY, v, TREE.EMPTY)
+    fi
+
+// the root of ins() may come out red; a real red-black insert always
+// re-blackens the root before handing the tree back to the caller
+blacken(t: TREE) -> TREE =>
+    case t
+    when n: TREE.NODE then TREE.NODE(COLOUR.BLACK, n.left, n.value, n.right)
+    else t
+    esac
+
+insert_value(t: TREE, v: int) -> TREE => blacken(ins(t, v))
+
+count(t: TREE) -> int =>
+    case t
+    when n: TREE.NODE then 1 + count(n.left) + count(n.right)
+    else 0
+    esac
+
+black_height(t: TREE) -> int =>
+    case t
+    when n: TREE.NODE /\ n.colour == COLOUR.BLACK then 1 + black_height(n.left)
+    when n: TREE.NODE then black_height(n.left)
+    else 0
+    esac
+
+is_leaf(t: TREE) -> string =>
+    // isa narrows t in place, and the else branch to the other variant,
+    // since TREE has only two
+    if isa TREE.NODE(t) then
+        "node with value {t.value}"
+    else
+        "empty"
+    fi
+
+let t: TREE mut = TREE.EMPTY
+for v in [10, 5, 20, 3, 7, 15, 25, 1, 30, 12] do
+    t = insert_value(t, v)
+od
+
+write_line("tree size: {count(t)}")
+write_line("black height: {black_height(t)}")
+write_line(is_leaf(TREE.EMPTY))
+write_line(is_leaf(t))

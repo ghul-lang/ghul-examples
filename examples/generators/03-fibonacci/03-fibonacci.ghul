@@ -1,0 +1,18 @@
+use IO.Std.write_line
+
+// the first n Fibonacci numbers. a and b keep their values across each yield:
+fibonacci(n: int) -> int{} is
+    let a mut = 0
+    let b mut = 1
+    let count mut = 0
+    while count < n do
+        yield a
+        let c = a + b
+        a = b
+        b = c
+        count = count + 1
+    od
+si
+
+// the first ten Fibonacci numbers
+write_line("fibonacci: {fibonacci(10)}")

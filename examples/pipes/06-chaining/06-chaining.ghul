@@ -1,0 +1,41 @@
+use IO.Std.write_line
+use Ghul.Pipes
+
+// you can chain multiple calls in a fluent style:
+let count_greater_than_3 =
+    [1, 2, 3, 4, 5, 6, 7, 8] |>
+        filter(i => i > 3) |>
+        count()
+
+write_line("count of elements > 3 is: {count_greater_than_3}")
+
+let sum_double_odd =
+    [1, 2, 3, 4, 5, 6, 7, 8] |>
+        filter(i => is_odd(i)) |>
+        map(i => i * 2) |>
+        reduce(0, (r, e) => r + e)
+
+write_line("sum of doubled odd numbers is: {sum_double_odd}")
+
+let first_3 = [1, 2, 3, 4, 5, 6, 7, 8] |> take(3)
+write_line("take first 3: {first_3}")
+
+let skip_3 = [1, 2, 3, 4, 5, 6, 7, 8] |> skip(3)
+write_line("skip first 3: {skip_3}")
+
+let three_from_middle =
+    [1, 2, 3, 4, 5, 6, 7, 8] |>
+        skip(3) |>
+        take(3)
+
+write_line("take 3 from the middle: {three_from_middle}")
+
+let sum_three_from_middle =
+    [1, 2, 3, 4, 5, 6, 7, 8] |>
+        skip(3) |>
+        take(3) |>
+        reduce(0, (r, e) => r + e)
+
+write_line("sum of 3 from the middle: {sum_three_from_middle}")
+
+is_odd(i: int) -> bool => i & 1 != 0

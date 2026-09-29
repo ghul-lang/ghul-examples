@@ -1,0 +1,20 @@
+use IO.Std.write_line
+
+write_line(label(("nothing", 0)))
+write_line(label(("life the universe and everything", 42)))
+write_line(label(("lucky", 7)))
+write_line(label(null))
+
+label(pair: (name: string, value: int)?) -> string =>
+    // if let with a destructuring pattern matches if
+    // the value is present and the corresponding elements
+    // of the value match
+    if let (name, 0) = pair then
+        "{name} is zero"
+    elif let (name, 42) = pair then
+        "{name} is the answer"
+    elif let (name, n) = pair then
+        "{name} is {n}"
+    else
+        "nothing"
+    fi

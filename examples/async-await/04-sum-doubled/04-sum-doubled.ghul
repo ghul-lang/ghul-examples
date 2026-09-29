@@ -1,0 +1,17 @@
+use IO.Std.write_line
+
+double_async(x: int) -> Tasks.TASK[int] => x * 2
+
+// await can be used inside a loop:
+sum_doubled(xs: Collections.List[int]) -> Tasks.TASK[int] is
+    let total mut = 0
+
+    for x in xs do
+        let y = await double_async(x)
+        total = total + y
+    od
+
+    return total
+si
+
+write_line("sum_doubled = {sum_doubled([1, 2, 3, 4]).result}")

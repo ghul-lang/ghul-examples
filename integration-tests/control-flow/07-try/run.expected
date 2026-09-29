@@ -1,0 +1,6 @@
+we're pretty sure a wombat is the same as an elephant, right?
+err, maybe not: 07-try.ghul 9,5..9,29: wombat =~ elephant
+resource acquired
+caught: oops: exception with resource held
+resource released
+done

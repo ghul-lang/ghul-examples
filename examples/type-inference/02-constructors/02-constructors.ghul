@@ -3,7 +3,7 @@ use IO.Std.write_line
 class BOX[T](value: T)
 class PAIR[A, B](first: A, second: B)
 
-// a generic class's type arguments come from its constructor's arguments:
+// the type arguments come from the constructor arguments:
 let int_box = BOX(42)
 let string_box = BOX("hello")
 let pair = PAIR(123, "hello")

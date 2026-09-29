@@ -1,0 +1,23 @@
+use IO.Std.write_line
+
+// a block can run a loop that updates a mut variable, then end
+// with that variable as its value:
+let sum =
+    (
+        let acc mut = 0
+        for i in 1..11 do
+            acc = acc + i
+        od
+        acc
+    )
+write_line("sum 1..10: {sum}")
+
+let factorial =
+    (
+        let product mut = 1
+        for i in 1..6 do
+            product = product * i
+        od
+        product
+    )
+write_line("5!: {factorial}")

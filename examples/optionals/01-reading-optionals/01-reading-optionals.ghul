@@ -1,0 +1,29 @@
+use IO.Std.write_line
+
+// T? holds a T, or nothing. a T can be used where a T? is expected, but a
+// T? has to be checked for a value, with if let, '?', '!' or '??', before
+// it can be used where a T is expected.
+
+// a known scheme gives its port, and any other gives null:
+lookup_port(scheme: string) -> int? =>
+    case scheme
+    when "http" then 80
+    when "https" then 443
+    when "ssh" then 22
+    else null
+    esac
+
+let http = lookup_port("http")
+let smtp = lookup_port("smtp")
+
+// if let enters its branch only when a value is present, and
+// gives the present value a non-optional name to read directly
+if let port = http then
+    write_line("http listens on port {port}")
+fi
+
+if let port = smtp then
+    write_line("smtp listens on port {port}")
+else
+    write_line("smtp has no well-known port")
+fi
