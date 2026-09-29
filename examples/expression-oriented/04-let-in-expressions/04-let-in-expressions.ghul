@@ -1,0 +1,13 @@
+use IO.Std.write_line
+
+// let ... in names some values for use in a single following
+// expression, without opening a block:
+let area =
+    let width = 4, height = 3 in
+    width * height
+write_line("area: {area}")
+
+let size =
+    let x = 10 in
+    if x > 5 then "big" else "small" fi
+write_line("size: {size}")

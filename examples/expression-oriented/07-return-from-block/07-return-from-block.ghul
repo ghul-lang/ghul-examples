@@ -1,0 +1,15 @@
+use IO.Std.write_line
+
+// a return inside a block that is not the whole function body
+// exits the block, not the function: it sets the block's value, and
+// the code after the block still runs:
+let first_positive =
+    (
+        for x in [-3, -1, 4, 9] do
+            if x > 0 then
+                return "{x}"
+            fi
+        od
+        "none"
+    )
+write_line("first positive: {first_positive}")

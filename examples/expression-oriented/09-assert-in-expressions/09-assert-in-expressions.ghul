@@ -1,0 +1,10 @@
+use IO.Std.write_line
+
+// assert ... in checks a condition as part of an expression: if the
+// assert fails it throws, otherwise the following expression is the
+// result:
+checked_head(xs: int[]) -> int =>
+    assert xs.count > 0 else "empty" in
+    xs[0]
+
+write_line("head of [10,20,30]: {checked_head([10, 20, 30])}")

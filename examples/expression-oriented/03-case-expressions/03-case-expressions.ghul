@@ -1,0 +1,17 @@
+use IO.Std.write_line
+
+// a case can be used as an expression too; here it needs an else arm,
+// and one arm can match several values:
+grade(score: int) -> string =>
+    case score / 10
+    when 10, 9 then "A"
+    when 8 then "B"
+    when 7 then "C"
+    when 6 then "D"
+    else "F"
+    esac
+
+write_line("95: {grade(95)}")
+write_line("82: {grade(82)}")
+write_line("71: {grade(71)}")
+write_line("40: {grade(40)}")

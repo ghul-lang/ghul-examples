@@ -1,0 +1,19 @@
+use IO.Std.write_line
+
+// when a block is the whole '=>' body it works like a normal
+// block body: return exits the function, and the trailing expression
+// supplies the value for any path that does not return early:
+sign_label(n: int) -> string =>
+    (
+        if n < 0 then
+            return "neg"
+        fi
+        if n == 0 then
+            return "zero"
+        fi
+        "pos"
+    )
+
+write_line("sign_label(-5): {sign_label(-5)}")
+write_line("sign_label(0): {sign_label(0)}")
+write_line("sign_label(5): {sign_label(5)}")
