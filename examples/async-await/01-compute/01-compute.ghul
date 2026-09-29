@@ -1,0 +1,22 @@
+use IO.Std.write_line
+
+// an async function returns Tasks.TASK[T], or Tasks.TASK when there's no
+// result. every task here completes straight away, so each run prints the
+// same thing.
+
+// a T returned from a function that returns Tasks.TASK[T] is wrapped in a
+// completed task:
+double_async(x: int) -> Tasks.TASK[int] => x * 2
+
+add_async(x: int, y: int) -> Tasks.TASK[int] => x + y
+
+// await waits for a task and gives its result:
+compute() -> Tasks.TASK[int] is
+    let a = await double_async(10)
+    let b = await double_async(a)
+    let c = await add_async(a, b)
+
+    return c
+si
+
+write_line("compute() = {compute().result}")

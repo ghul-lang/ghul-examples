@@ -1,0 +1,35 @@
+use IO.Std.write_line
+
+double_async(x: int) -> Tasks.TASK[int] => x * 2
+
+// awaiting a faulted task throws its exception, so the function that awaits
+// it returns a faulted task too. Tasks.TASK.from_exception makes one:
+checked_divide(a: int, b: int) -> Tasks.TASK[int] is
+    if b == 0 then
+        return Tasks.TASK.from_exception(
+            System.InvalidOperationException("division by zero")
+        )
+    fi
+
+    return a / b
+si
+
+divide_then_double(a: int, b: int) -> Tasks.TASK[int] is
+    let q = await checked_divide(a, b)
+    let result = await double_async(q)
+
+    return result
+si
+
+write_line("divide_then_double(20, 5) = {divide_then_double(20, 5).result}")
+
+// .result on a faulted task throws an AggregateException, and
+// get_base_exception gets the original exception from it:
+try
+    let result = divide_then_double(10, 0).result
+    write_line("divide_then_double(10, 0) unexpected: {result}")
+catch ex: System.AggregateException
+    let cause = ex.get_base_exception()
+
+    write_line("divide_then_double(10, 0) caught: {cause.message}")
+yrt

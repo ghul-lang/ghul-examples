@@ -1,0 +1,2 @@
+divide_then_double(20, 5) = 8
+divide_then_double(10, 0) caught: division by zero

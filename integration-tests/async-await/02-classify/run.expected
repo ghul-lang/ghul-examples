@@ -1,0 +1,2 @@
+classify(10) = small
+classify(100) = big

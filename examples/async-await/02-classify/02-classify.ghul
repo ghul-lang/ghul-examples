@@ -1,0 +1,17 @@
+use IO.Std.write_line
+
+double_async(x: int) -> Tasks.TASK[int] => x * 2
+
+// a return after an await leaves the function, as it would anywhere else:
+classify(n: int) -> Tasks.TASK[string] is
+    let doubled = await double_async(n)
+
+    if doubled > 50 then
+        return "big"
+    fi
+
+    return "small"
+si
+
+write_line("classify(10) = {classify(10).result}")
+write_line("classify(100) = {classify(100).result}")
