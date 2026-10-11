@@ -1,0 +1,11 @@
+{
+    // How the example tests are run: each is an MSBuild project, built with
+    // the compiler the tool manifest pins.
+    "default": "projects",
+    "configurations": {
+        "projects": {
+            "build": "msbuild",
+            "compiler": "project"
+        }
+    }
+}

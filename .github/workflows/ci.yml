@@ -26,4 +26,4 @@ jobs:
       run: dotnet run --project tools/examples-index
 
     - name: Run Integration Tests
-      run: dotnet ghul-test --use-dotnet-build integration-tests
+      run: dotnet ghul-test integration-tests
