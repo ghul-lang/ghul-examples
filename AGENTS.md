@@ -30,7 +30,7 @@ All builds and integration tests must succeed before opening a pull request.
 | Step   | How to Run | Typical Duration | Notes |
 |--------|-----------|------------------|-------|
 | Build  | `dotnet build` | Seconds | Compiles all example projects |
-| Integration Tests | `dotnet ghul-test --use-dotnet-build integration-tests` | ~3 minutes | Snapshot-based tests in `integration-tests/` |
+| Integration Tests | `dotnet ghul-test integration-tests` | ~3 minutes | Snapshot-based tests in `integration-tests/` |
 
 ### Integration Test Notes
 
