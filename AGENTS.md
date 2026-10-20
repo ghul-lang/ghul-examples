@@ -12,16 +12,14 @@ This guide is for AI agents and other automated contributors working on the ghū
 
 ## Keeping GHUL.md in sync
 
-`GHUL.md` is **not authored here.** The master copy lives in the [`ghul`](https://github.com/degory/ghul) compiler repo (`ghul/GHUL.md`), which is updated whenever the language changes. The copy in this repo exists so the examples are self-contained.
-
-When you open a PR that touches this repo, check whether the master `GHUL.md` has moved ahead of the copy here, and if so refresh it as part of your PR:
+`GHUL.md` is **not authored here.** The master copy lives in the [`ghul`](https://github.com/ghul-lang/ghul) compiler repo (`ghul/GHUL.md`), with its topic files in `ghul/docs/`; the copy here links to them on GitHub. Refresh it with the script, which a CI check also runs weekly and on any change to the file:
 
 ```sh
-diff path/to/ghul/GHUL.md GHUL.md   # any output => out of date
-cp  path/to/ghul/GHUL.md GHUL.md    # refresh, then commit
+scripts/sync-ghul-md.sh          # refresh GHUL.md
+scripts/sync-ghul-md.sh --check  # exit 1 if it is out of step
 ```
 
-Only sync when it's genuinely out of date and you're already touching this repo - don't open a PR solely to sync (the compiler repo's own PRs keep the master current). Never hand-edit `GHUL.md` here to fix a language-reference error; fix it in the `ghul` repo's master copy and let the sync carry it over.
+Never hand-edit `GHUL.md` here to fix a language-reference error; fix it in the `ghul` repo's master copy and let the sync carry it over.
 
 ## Test Requirements
 
