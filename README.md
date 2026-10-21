@@ -2,7 +2,7 @@
 
 This repository contains examples of the [ghūl programming language](https://ghul.dev).
 
-[![ghūl logo icon small](https://raw.githubusercontent.com/degory/ghul-dev/035cc6d3997514d03cbbd7b15133c37bf2a79f4e/src/.vuepress/public/ghul-logo-icon-128.png)](https://ghul.dev)
+[![ghūl logo icon small](https://raw.githubusercontent.com/ghul-lang/ghul-dev/035cc6d3997514d03cbbd7b15133c37bf2a79f4e/src/.vuepress/public/ghul-logo-icon-128.png)](https://ghul.dev)
 
 ## prerequisites
 
@@ -121,7 +121,7 @@ This is some different text
 
 ### opening an individual example project
 
-Each individual example folder, or each piece folder of an example split into pieces, contains a .NET project. You can open these project folders separately in VSCode or in a Codespace in your browser. You don't need to do this just to view the examples, tinker with the code, and to run them. You might want to open a project folder directly in VSCode if you choose to use it as a starting point for a new project. The [ghūl .NET templates](https://www.nuget.org/packages/ghul.templates) or the [ghūl GitHub repo template](https://github.com/degory/ghul-repository-template) might be better options for this however.
+Each individual example folder, or each piece folder of an example split into pieces, contains a .NET project. You can open these project folders separately in VSCode or in a Codespace in your browser. You don't need to do this just to view the examples, tinker with the code, and to run them. You might want to open a project folder directly in VSCode if you choose to use it as a starting point for a new project. The [ghūl .NET templates](https://www.nuget.org/packages/ghul.templates) or the [ghūl GitHub repo template](https://github.com/ghul-lang/ghul-repository-template) might be better options for this however.
 
 Note that some of the configuration for these projects is being inherited from the root folder of the repo, so if you move a project folder out from under project repo root, you will need to copy this shared config into the example project folder (`Directory.Build.props`, `.config` and `.devcontainer`).
 
@@ -152,4 +152,4 @@ Feel free to contribute new ghūl language examples by raising a PR.
 
 ## issues
 
-[View open issues](https://github.com/degory/ghul/issues?q=is%3Aopen+is%3Aissue+label%3Aghul-examples) or [raise a new one](https://github.com/degory/ghul/issues/new?labels=ghul-examples).
+[View open issues](https://github.com/ghul-lang/ghul/issues?q=is%3Aopen+is%3Aissue+label%3Aghul-examples) or [raise a new one](https://github.com/ghul-lang/ghul/issues/new?labels=ghul-examples).
