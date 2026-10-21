@@ -37,4 +37,4 @@ Silence on a low-confidence finding is better than noise.
 
 ## versioning
 
-This repo isn't published as a versioned artefact - the examples are consumed in-tree (integration tests; the website's runnable-example renderer in `degory/ghul-dev`). No semver applies; there is no `VERSION` file, and PRs to this repo carry no version implications - flag only if a PR body claims a version bump that wouldn't fire.
+This repo isn't published as a versioned artefact - the examples are consumed in-tree (integration tests; the website's runnable-example renderer in `ghul-lang/ghul-dev`). No semver applies; there is no `VERSION` file, and PRs to this repo carry no version implications - flag only if a PR body claims a version bump that wouldn't fire.
