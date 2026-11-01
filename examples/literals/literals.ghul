@@ -19,6 +19,6 @@ entry() is
     assert ("three", "string", "tuple").get_type() == typeof (string,string,string)
     write_line("tuple literal: {("three", "string", "tuple")}")
 
-    assert ["a", "four", "element", "list"].get_type() == typeof string[]
+    assert ["a", "four", "element", "list"].get_type() == typeof ARRAY[string]
     write_line("list literal: {["a", "four", "element", "list"] |> $}")
 si
