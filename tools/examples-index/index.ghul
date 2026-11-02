@@ -27,7 +27,7 @@ let topics = [
     ("type-inference", "type inference")
 ]
 
-// an expected-output file can have Windows line endings, so normalise them
+// an expected-output file can have Windows line endings, so normalize them
 read_or_null(path: string) -> string? =>
     if IO.File.exists(path) then IO.File.read_all_text(path).replace("\r\n", "\n") else null fi
 

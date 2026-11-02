@@ -1,8 +1,8 @@
 use IO.Std.write_line
 
-let full = ORDER(1, CUSTOMER("Ada", CONTACT("ada@example.com")))
-let no_contact = ORDER(2, CUSTOMER("Bjarne", null))
-let guest = ORDER(3, null)
+let full = Order(1, Customer("Ada", Contact("ada@example.com")))
+let no_contact = Order(2, Customer("Bjarne", null))
+let guest = Order(3, null)
 
 write_line(reach(full))
 write_line(reach(no_contact))
@@ -11,7 +11,7 @@ write_line(reach(guest))
 write_line(who(full))
 write_line(who(guest))
 
-reach(order: ORDER) -> string =>
+reach(order: Order) -> string =>
     // a single if let can chain comma-separated clauses; every clause
     // must be present for the then-arm to run, and a later clause can
     // use the locals declared by an earlier one
@@ -21,7 +21,7 @@ reach(order: ORDER) -> string =>
         "order {order.id}: no contact on file"
     fi
 
-who(order: ORDER) -> string =>
+who(order: Order) -> string =>
     // the path shorthand declares a local named after the path's last
     // member, and matches when the whole path is present
     if let order.customer then
@@ -30,8 +30,8 @@ who(order: ORDER) -> string =>
         "guest"
     fi
 
-class ORDER(id: int, customer: CUSTOMER?)
+class Order(id: int, customer: Customer?)
 
-class CUSTOMER(name: string, contact: CONTACT?)
+class Customer(name: string, contact: Contact?)
 
-class CONTACT(email: string)
+class Contact(email: string)

@@ -1,11 +1,11 @@
 use IO.Std.write_line
 
 // manager is optional: the head of the tree reports to nobody
-class EMPLOYEE(name: string, manager: EMPLOYEE?)
+class Employee(name: string, manager: Employee?)
 
-let ceo = EMPLOYEE("Ada", null)
-let lead = EMPLOYEE("Bjarne", ceo)
-let dev = EMPLOYEE("Grace", lead)
+let ceo = Employee("Ada", null)
+let lead = Employee("Bjarne", ceo)
+let dev = Employee("Grace", lead)
 
 // '?.' reads a member when there is a value, and gives null when there
 // isn't, so a chain stops at the first absent value. '??' then gives a

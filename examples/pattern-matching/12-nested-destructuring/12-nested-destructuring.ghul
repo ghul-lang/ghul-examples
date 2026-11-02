@@ -1,5 +1,5 @@
 use IO.Std.write_line
-use Colour.*
+use Color.*
 use Tree.*
 
 // patterns nest. this is Okasaki's red-black tree rebalance, which matches a
@@ -7,18 +7,18 @@ use Tree.*
 // name in a pattern declares a new variable, so ~RED is written to match the
 // imported enum member instead
 
-enum Colour is
+enum Color is
     RED,
     BLACK,
 si
 
 union Tree is
     EMPTY
-    NODE(colour: Colour, left: Tree, value: int, right: Tree)
+    NODE(color: Color, left: Tree, value: int, right: Tree)
 si
 
-balance(colour: Colour, left: Tree, value: int, right: Tree) -> Tree =>
-    case (colour, left, value, right)
+balance(color: Color, left: Tree, value: int, right: Tree) -> Tree =>
+    case (color, left, value, right)
     when (~BLACK, (~RED, (~RED, a, x, b): NODE, y, c): NODE, z, d) then
         NODE(RED, NODE(BLACK, a, x, b), y, NODE(BLACK, c, z, d))
     when (~BLACK, (~RED, a, x, (~RED, b, y, c): NODE): NODE, z, d) then
@@ -28,15 +28,15 @@ balance(colour: Colour, left: Tree, value: int, right: Tree) -> Tree =>
     when (~BLACK, a, x, (~RED, b, y, (~RED, c, z, d): NODE): NODE) then
         NODE(RED, NODE(BLACK, a, x, b), y, NODE(BLACK, c, z, d))
     else
-        NODE(colour, left, value, right)
+        NODE(color, left, value, right)
     esac
 
 ins(t: Tree, v: int) -> Tree =>
-    if let (colour, left, value, right): NODE = t then
+    if let (color, left, value, right): NODE = t then
         if v < value then
-            balance(colour, ins(left, v), value, right)
+            balance(color, ins(left, v), value, right)
         elif v > value then
-            balance(colour, left, value, ins(right, v))
+            balance(color, left, value, ins(right, v))
         else
             t
         fi
@@ -62,7 +62,7 @@ count(t: Tree) -> int =>
 
 black_height(t: Tree) -> int =>
     case t
-    when n: NODE /\ n.colour == BLACK then 1 + black_height(n.left)
+    when n: NODE /\ n.color == BLACK then 1 + black_height(n.left)
     when n: NODE then black_height(n.left)
     else 0
     esac

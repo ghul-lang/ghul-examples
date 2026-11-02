@@ -4,28 +4,28 @@ use Ghul.Pipes.find
 write_line(greet(find_cat("Felix")))
 write_line(greet(find_cat("Nobody")))
 
-greet(maybe_a_cat: CAT?) -> string =>
-    // maybe_a_cat is an optional CAT
-    // its value can be a CAT, or nothing
+greet(maybe_a_cat: Cat?) -> string =>
+    // maybe_a_cat is an optional Cat
+    // its value can be a Cat, or nothing
 
     // if let with no pattern matches if a value is present
     if let definitely_a_cat = maybe_a_cat then
-        // definitely_a_cat is a CAT
+        // definitely_a_cat is a Cat
         definitely_a_cat.meow()
     else
         "no such cat"
     fi
 
 
-find_cat(name: string) -> CAT? =>
+find_cat(name: string) -> Cat? =>
     let
-        cats = [CAT("Felix"), CAT("Eric"), CAT("Geoff")]
+        cats = [Cat("Felix"), Cat("Eric"), Cat("Geoff")]
     in
         cats |> find(c => c.name == name)
 
-class ANIMAL(name: string)
+class Animal(name: string)
 
-class CAT(name: string): ANIMAL is
+class Cat(name: string): Animal is
     super(name)
 
     meow() -> string =>

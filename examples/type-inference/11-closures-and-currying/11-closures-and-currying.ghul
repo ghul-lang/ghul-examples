@@ -1,6 +1,6 @@
 use IO.Std.write_line
 
-class BOX[T](value: T)
+class Box[T](value: T)
 
 make_multiplier(n: int) -> int -> int =>
     x => x * n
@@ -15,7 +15,7 @@ write_line("add_5(20): {add_5(20)}")
 let times_7 = make_multiplier(7)
 write_line("times_7(6): {times_7(6)}")
 
-// BOX's T comes from n, and make_box's return type from BOX:
-let make_box = n => BOX(n)
+// Box's T comes from n, and make_box's return type from Box:
+let make_box = n => Box(n)
 let boxed = make_box(42)
 write_line("boxed.value: {boxed.value}")
