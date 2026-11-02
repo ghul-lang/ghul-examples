@@ -3,7 +3,7 @@ use IO.Std.write_line
 // a let variable takes its type from its initializer:
 let an_int = 42
 let a_single = 3.14s
-let a_double = 3.14D
+let a_double = 3.14
 let a_string = "hello"
 let a_char = 'g'
 let a_bool = true

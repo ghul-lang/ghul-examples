@@ -6,15 +6,15 @@ union Shape is
     TRIANGLE(base: double, height: double)
 si
 
-write_line(describe_shape(Shape.CIRCLE(20.0D)))
-write_line(describe_shape(Shape.CIRCLE(2.0D)))
-write_line(describe_shape(Shape.SQUARE(3.0D)))
+write_line(describe_shape(Shape.CIRCLE(20.0)))
+write_line(describe_shape(Shape.CIRCLE(2.0)))
+write_line(describe_shape(Shape.SQUARE(3.0)))
 
 describe_shape(s: Shape) -> string =>
     // the same guard works on a case arm; the bound name (c) and the
     // scrutinee narrowing are both in scope in the guard and the body
     case s
-    when c: Shape.CIRCLE /\ c.radius > 10.0D then "large circle"
+    when c: Shape.CIRCLE /\ c.radius > 10.0 then "large circle"
     when c: Shape.CIRCLE then "circle radius {c.radius}"
     when q: Shape.SQUARE then "square side {q.side}"
     when t: Shape.TRIANGLE then "triangle base {t.base}"
