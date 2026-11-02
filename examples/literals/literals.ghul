@@ -13,8 +13,8 @@ entry() is
     assert 123 .get_type() == typeof int
     write_line("integer literal: {123}")
 
-    assert 123_456.789e6D .get_type() == typeof double
-    write_line("double literal: {123_456.789e6D}")
+    assert 123_456.789e6 .get_type() == typeof double
+    write_line("double literal: {123_456.789e6}")
 
     assert ("three", "string", "tuple").get_type() == typeof (string,string,string)
     write_line("tuple literal: {("three", "string", "tuple")}")

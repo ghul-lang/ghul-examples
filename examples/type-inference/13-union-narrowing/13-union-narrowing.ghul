@@ -17,5 +17,5 @@ describe(s: Shape) -> string =>
         "square of side {s.side}"
     fi
 
-write_line(describe(CIRCLE(3.0D)))
-write_line(describe(SQUARE(4.0D)))
+write_line(describe(CIRCLE(3.0)))
+write_line(describe(SQUARE(4.0)))

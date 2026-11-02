@@ -1,19 +1,19 @@
 use IO.Std.write_line
 
-write_line("area of a circle: {area(Shape.CIRCLE(2.0D))}")
-write_line("area of a square: {area(Shape.SQUARE(3.0D))}")
-write_line("area of a triangle: {area(Shape.TRIANGLE(4.0D, 5.0D))}")
+write_line("area of a circle: {area(Shape.CIRCLE(2.0))}")
+write_line("area of a square: {area(Shape.SQUARE(3.0))}")
+write_line("area of a triangle: {area(Shape.TRIANGLE(4.0, 5.0))}")
 
-write_line(is_round(Shape.CIRCLE(2.0D)))
-write_line(is_round(Shape.SQUARE(3.0D)))
+write_line(is_round(Shape.CIRCLE(2.0)))
+write_line(is_round(Shape.SQUARE(3.0)))
 
 area(s: Shape) -> double =>
     // Shape is a closed union with three variants, all covered here,
     // so this case expression is exhaustive without an else arm
     case s
-    when c: Shape.CIRCLE then 3.14159D * c.radius * c.radius
+    when c: Shape.CIRCLE then 3.14159 * c.radius * c.radius
     when q: Shape.SQUARE then q.side * q.side
-    when t: Shape.TRIANGLE then 0.5D * t.base * t.height
+    when t: Shape.TRIANGLE then 0.5 * t.base * t.height
     esac
 
 is_round(s: Shape) -> string =>

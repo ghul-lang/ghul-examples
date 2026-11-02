@@ -43,7 +43,12 @@ ghūl keywords are lowercase. Identifiers follow a naming convention, and the co
 
 - `snake_case`: variables, functions, methods, properties
 - `PascalCase`: namespaces, traits, abstract classes, exception classes, unions, enums
-- `UPPER_SNAKE_CASE`: concrete classes, structs, variants, enum members
+- `UPPER_SNAKE_CASE`: union variants, enum members
+- either: concrete classes and structs
+
+A concrete class or struct can be written either way. The standard library uses `UPPER_SNAKE_CASE` for its concrete types (`LIST`, `MAP`, `STRING_BUILDER`), and so do the few .NET types that ghūl renames. Every other .NET type keeps its .NET name. Example code and most programs use `PascalCase` for their own types (`Order`, `Point`).
+
+A name of more than one letter is `PascalCase` only if it has a lower-case letter, so an all-caps word such as `TREE` is `UPPER_SNAKE_CASE` and not `PascalCase`. A single capital such as `T` is both.
 
 An exception class is `PascalCase`, whether or not it is abstract. An exception class is `Exception` or any class that derives from it, directly or indirectly. Code names an exception class where it throws the exception and where it catches it. Every exception imported from .NET is already `PascalCase`.
 
@@ -55,9 +60,7 @@ The compiler warns when a declaration in ghūl source does not follow the conven
 
 - `non-snake-case-name`: variables (including `let`, `for` and `catch` locals, and function arguments), functions, methods, properties.
 - `non-pascal-case-name`: abstract classes, exception classes, traits, unions, enums.
-- `non-upper-snake-case-name`: concrete classes, structs, variants, enum members.
-
-A class with only `static` members and no primary-constructor parameters is a static utility container. Nothing constructs it. Its name can be `PascalCase` or `UPPER_SNAKE_CASE`.
+- `non-upper-snake-case-name`: variants and enum members, and a concrete class or struct whose name is neither `PascalCase` nor `UPPER_SNAKE_CASE`.
 
 *More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#naming-conventions).*
 
@@ -296,7 +299,7 @@ od
 write_line("{factorial}");     // 265252859812191058636308480000000
 ```
 
-Mixed operands are an error, exactly as `1.0D + 1` is. If `total` is a `bigint`, `total * 2` is an error; write `total * 2n`. `==` on a `bigint` is an error, as it is on every other struct. Compare `bigint` values with `=~`.
+Mixed operands are an error, exactly as `1.0 + 1` is. If `total` is a `bigint`, `total * 2` is an error; write `total * 2n`. `==` on a `bigint` is an error, as it is on every other struct. Compare `bigint` values with `=~`.
 
 A fractional literal is a `double` unless it has a suffix: `s` for single, `d` for double, `m` for decimal, in either case. The `m` suffix also works on a literal with only digits, to write an integral decimal (`100m`). Exponent notation is valid: `1.5e3`, `1.5E-3`.
 
@@ -309,6 +312,8 @@ let o: object = "hello";         // ok, string is an object
 ```
 
 Each scalar type is also a constructor that takes any other scalar. The constructor converts exactly as a cast to that type does. `double(n)` is `cast double(n)`. `int(x)` truncates, as `cast int(x)` does. A value out of range wraps, as it does with a cast. `_(n)` converts to the scalar type that the context expects. The argument must be a scalar: `int("42")` does not parse a string. Convert a value held as `object` or as a type parameter with `cast`, which unboxes it.
+
+`pow` raises a number to a power. `pow(x, y)` on two `double`s calls the platform's power function. Every integer type and `bigint` also has a `pow` that takes an `int` exponent and returns the base's type: `pow(2, 10)` is 1024, and `pow(3L, 30)` is a `long`. An integer `pow` whose result does not fit its type throws `OverflowException`, where `*` wraps, and a negative exponent throws `ArgumentOutOfRangeException`. Because `pow` has several overloads, a call whose arguments are all untyped casts, such as `pow(cast(x), cast(y))`, doesn't resolve, because the compiler can't tell which type to cast to. Name the type, as in `pow(double(x), double(y))`. `pow` is in `Ghul.Math`, so `use default` imports it.
 
 ```ghul
 let n = 7;
@@ -2053,8 +2058,8 @@ See <https://ghul.dev/dotnet-integration.html>.
 ghūl compiles to .NET IL, and can use most types in any .NET assembly. The compiler converts .NET names to ghūl conventions:
 
 - Method, property and field names become `snake_case`.
-- Enum names and enum members become `MACRO_CASE`.
-- Class, struct and trait names keep their .NET names, without .NET's generic arity suffix. So `SortedSet<T>` is `Collections.SortedSet[T]`.
+- Enum members become `UPPER_SNAKE_CASE`.
+- Type names keep their .NET names, without .NET's generic arity suffix, except a short list of core types that ghūl names in `UPPER_SNAKE_CASE` (`LIST`, `MAP`, `SET`, `STRING_BUILDER`, `RANDOM`, `TASK`, ...), listed below. So `SortedSet<T>` is `Collections.SortedSet[T]`.
 - The namespace `System.Collections.Generic` is `Collections`, and `System.IO` is `IO`.
 
 Some common types have different names:
@@ -2106,7 +2111,7 @@ A member `=~` or `<>` must be `pure`: declared `pure`, or provably store-free. O
 
 A backtick escapes an identifier that is a ghūl keyword: `` `class `` is the identifier `class`.
 
-A static property or field is `snake_case`, even when it looks like a constant, because only enum members become `MACRO_CASE`. So `CancellationToken.None` is `System.Threading.CancellationToken.none`.
+A static property or field is `snake_case`, even when it looks like a constant, because only enum members become `UPPER_SNAKE_CASE`. So `CancellationToken.None` is `System.Threading.CancellationToken.none`.
 
 An **indexer** is the one member that code reaches only through its own syntax. .NET does not fix an indexer's name: the property has the name its declaring language chose, and the type names the real one. `System.String` and `Text.STRING_BUILDER` both call theirs `Chars`. Code never writes the name: `[` and `]` find the indexer whatever its name is.
 
