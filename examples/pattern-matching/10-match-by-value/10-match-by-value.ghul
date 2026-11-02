@@ -3,7 +3,7 @@ use IO.Std.write_line
 // case compares its value with each label the way =~ does, so strings,
 // optionals and types that declare =~ match by value, not by reference
 
-class POINT is
+class Point is
     x: int
     y: int
 
@@ -12,13 +12,13 @@ class POINT is
         self.y = y
     si
 
-    =~(other: POINT) -> bool => x == other.x /\ y == other.y
+    =~(other: Point) -> bool => x == other.x /\ y == other.y
     get_hash_code() -> int => x * 397 + y
 si
 
-classify_point(p: POINT) -> string =>
+classify_point(p: Point) -> string =>
     case p
-    when POINT(0, 0) then "origin"
+    when Point(0, 0) then "origin"
     else "elsewhere"
     esac
 
@@ -45,9 +45,9 @@ let built = "{prefix}at"
 write_line(describe_day(built))
 write_line(describe_day("Mon"))
 
-// two different POINT instances, equal by =~
-write_line(classify_point(POINT(0, 0)))
-write_line(classify_point(POINT(1, 1)))
+// two different Point instances, equal by =~
+write_line(classify_point(Point(0, 0)))
+write_line(classify_point(Point(1, 1)))
 
 write_line(label_optional(42))
 write_line(label_optional(null))

@@ -2,7 +2,7 @@ use IO.Std.write_line
 use Collections.LIST
 use Collections.MAP
 
-class BOX[T] is
+class Box[T] is
     value: T public
 
     init() is si
@@ -15,7 +15,7 @@ si
 // type arguments nothing else gives can come from how the value is used later.
 
 // T comes from the call to set:
-let b = BOX()
+let b = Box()
 b.set(42)
 write_line("b.value: {b.value}")
 

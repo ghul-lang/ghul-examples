@@ -1,29 +1,29 @@
 use IO.Std.write_line
 
-write_line(describe(CAT("Felix")))
-write_line(describe(DOG("Rex")))
-write_line(describe(ANIMAL("Gerald")))
+write_line(describe(Cat("Felix")))
+write_line(describe(Dog("Rex")))
+write_line(describe(Animal("Gerald")))
 
-describe(a: ANIMAL) -> string =>
+describe(a: Animal) -> string =>
     // if let with a type matches if the value is of a compatible type
-    if let cat: CAT = a then
+    if let cat: Cat = a then
         cat.meow()
-    elif let dog: DOG = a then
+    elif let dog: Dog = a then
         dog.bark()
     else
         "{a.name} is some other animal"
     fi
 
-class ANIMAL(name: string)
+class Animal(name: string)
 
-class CAT(name: string): ANIMAL is
+class Cat(name: string): Animal is
     super(name)
 
     meow() -> string =>
         "{name} says meow"
 si
 
-class DOG(name: string): ANIMAL is
+class Dog(name: string): Animal is
     super(name)
 
     bark() -> string =>

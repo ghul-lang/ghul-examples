@@ -2,7 +2,7 @@ name: Code review
 
 # Deliberately independent of the CI workflow's trigger, which does not fire
 # on these events. That way taking a pull request out of draft, or editing
-# its description, starts or restarts the review without starting, cancelling
+# its description, starts or restarts the review without starting, canceling
 # or invalidating any CI job: a draft run's results carry over to the ready
 # PR untouched. The job's own concurrency group cancels a review still
 # running when a new one starts.

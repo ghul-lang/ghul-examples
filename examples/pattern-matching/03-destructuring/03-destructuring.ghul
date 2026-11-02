@@ -1,11 +1,11 @@
 use IO.Std.write_line
 
-write_line(show(SCORE("Alice", 10)))
+write_line(show(Score("Alice", 10)))
 write_line(show(null))
-write_line(show(pick_winner(SCORE("Bob", 99), SCORE("Alice", 10))))
-write_line(show(pick_winner(SCORE("Alice", 99), SCORE("Bob", 99))))
+write_line(show(pick_winner(Score("Bob", 99), Score("Alice", 10))))
+write_line(show(pick_winner(Score("Alice", 99), Score("Bob", 99))))
 
-show(score: SCORE?) -> string =>
+show(score: Score?) -> string =>
     if let (who, points) = score then
         "{who} scored {points}"
     else
@@ -13,7 +13,7 @@ show(score: SCORE?) -> string =>
     fi
 
 // pick the higher scorer, or null for a draw
-pick_winner(a: SCORE, b: SCORE) -> SCORE? =>
+pick_winner(a: Score, b: Score) -> Score? =>
     let
         (_, a_points) = a,
         (_, b_points) = b
@@ -26,4 +26,4 @@ pick_winner(a: SCORE, b: SCORE) -> SCORE? =>
             null
         fi
 
-class SCORE(who: string, points: int)
+class Score(who: string, points: int)

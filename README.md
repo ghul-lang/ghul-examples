@@ -21,7 +21,7 @@ To open the examples in a GitHub Codespace in your browser or in VS Code Desktop
 - when VSCode opens in your browser, you have two options, either:
   - continue to use the examples directly in the browser
 - or, if you prefer to open the examples in VSCode Desktop:
-  - click on the rectangle in the bottom left of the page labelled 'Codespaces'
+  - click on the rectangle in the bottom left of the page labeled 'Codespaces'
   - select `Open in VS Code Desktop` from the menu that pops up
 
 ### open in devcontainer in VSCode

@@ -8,29 +8,29 @@ entry() is
     write_line("int_things has {count_things(int_things)} things")
     write_line("string_things has {count_things(string_things)} things")
 
-    demonstrate_sack(SACK(), int_things)
-    demonstrate_sack(SACK(), string_things)
+    demonstrate_sack(ListSack(), int_things)
+    demonstrate_sack(ListSack(), string_things)
 
     bounded_type_parameters()
 si
 
 bounded_type_parameters() is
-    write_line(announce(CAT("Felix")))
-    write_line(announce(DOG("Rex")))
+    write_line(announce(Cat("Felix")))
+    write_line(announce(Dog("Rex")))
 
-    write_line(kind_of(CAT("Felix")))
-    write_line(kind_of(DOG("Rex")))
+    write_line(kind_of(Cat("Felix")))
+    write_line(kind_of(Dog("Rex")))
 si
 
 trait Animal is
     speak() -> string
 si
 
-class CAT(name: string): Animal is
+class Cat(name: string): Animal is
     speak() -> string => "{name} says meow"
 si
 
-class DOG(name: string): Animal is
+class Dog(name: string): Animal is
     speak() -> string => "{name} says woof"
 si
 
@@ -41,9 +41,9 @@ announce[T: Animal](pet: T) -> string =>
 
 // isa can test a T for a particular kind of Animal directly
 kind_of[T: Animal](pet: T) -> string =>
-    if isa CAT(pet) then
+    if isa Cat(pet) then
         "a cat"
-    elif isa DOG(pet) then
+    elif isa Dog(pet) then
         "a dog"
     else
         "some other animal"
@@ -64,7 +64,7 @@ trait Sack[T] is
     count() -> int
 si
 
-class SACK[T]: Sack[T] is
+class ListSack[T]: Sack[T] is
     _things: MutableList[T]
 
     init() is
