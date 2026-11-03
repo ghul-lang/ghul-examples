@@ -100,6 +100,21 @@ A whole-file namespace must be the first declaration in the file, after any `@@`
 
 A file with no namespace declaration can contain statements at the top level of the file, and so can a file whose namespace is a whole-file namespace. These top-level statements run in source order as the program's entry point, so a short program needs no `entry` function. Top-level statements can be mixed with global definitions. A global definition is visible everywhere in the file, wherever it appears. A file with top-level statements cannot declare a namespace block.
 
+In a file with top-level statements, a function written with no types anywhere in its signature is compiled as a nested function of the top-level statements. Its argument types come from its calls and its return type from its body, and the top-level `let`s it uses take their types from those uses too:
+
+```ghul
+let seen = SET()
+
+_visit(n) is
+    seen.add(n)
+si
+
+_visit(3)
+write_line("{seen.count}")
+```
+
+Such a function is private to the file. The compiler warns (`file-private-function`) when its name does not start with `_`, which is how the name says so. A class, a trait or a function with types in its signature cannot call it, and neither can another file: a function used from any of them needs its types. The functions are placed before the first statement that uses one of them, so they can be written in any order, and they can call each other. Like a function literal, such a function can be marked `memo` or `pure`: `fib(n) memo => ...`.
+
 A `use` statement brings names into scope, so code can refer to them without qualification. A `use` of a namespace imports every public symbol in it. A `use` of a single symbol imports that symbol:
 
 ```ghul
@@ -124,7 +139,7 @@ use MaybeName = string?;
 use Numbers = Collections.LIST[int];
 ```
 
-`use default` imports a fixed set of names that most files want. By default the set is `IO.Std.write_line`, `Ghul.Pipes`, `Collections`, `Ghul.Math`, `Ghul.NumberTheory` and `Ghul.Functional`. A name in the default set that the runtime doesn't define is skipped. The set is a fallback: a name that an explicit `use` in the same block imports, before or after the `use default`, means what that import says, and the default set's import of it is not a duplicate. A function the default set imports is another overload of its name, unless an explicit import or the program's own declaration takes the same parameters, which wins. In every other way `use default` is an ordinary `use`: it applies to the namespace block that contains it. Unless the project asks for an implicit import with `--implicit-default-use`, a file that does not write `use default` gets none of these names.
+`use default` imports a fixed set of names that most files want. By default the set is `IO.Std.write_line`, `Ghul.parse`, `Ghul.Pipes`, `Collections`, `Ghul.Math`, `Ghul.NumberTheory` and `Ghul.Functional`. A name in the default set that the runtime doesn't define is skipped. The set is a fallback: a name that an explicit `use` in the same block imports, before or after the `use default`, means what that import says, and the default set's import of it is not a duplicate. A function the default set imports is another overload of its name, unless an explicit import or the program's own declaration takes the same parameters, which wins. In every other way `use default` is an ordinary `use`: it applies to the namespace block that contains it. Unless the project asks for an implicit import with `--implicit-default-use`, a file that does not write `use default` gets none of these names.
 
 ```ghul
 use default
@@ -348,10 +363,12 @@ let padded = "[{value,12:F3}]";     // [    1500.000]
 
 The static type of an interpolated value decides how it is written:
 
-- A string, a number, an enum, and any type that declares its own `to_string` are written with that `to_string`. So is any value with an alignment.
+- A string, a number, an enum, and any type that declares its own `to_string` are written with that `to_string`.
 - A `bool` is written `true` or `false`, the ghūl spelling.
 - An optional is written as the value it holds, by these same rules, or as `null` when it holds no value.
 - Every other value is written by the runtime's `$`. This covers an array, a list, a tuple, a struct or class that declares no `to_string`, a value held as `object`, a trait and a type parameter. `$` writes a sequence as its elements in brackets, a tuple as its elements in parentheses, and a record as its type and members. Without `$`, these values would be written as their .NET type name.
+
+An alignment pads the text these rules give, and a format applies wherever they reach a number or a `System.IFormattable` value, including the value an optional holds. So `{xs,-12}` pads `[1, 2, 3]`, `{flag,6}` pads `true`, and an absent `{opt:F2}` is `null`.
 
 ```ghul
 struct POINT(x: int public, y: int public);
@@ -613,7 +630,7 @@ A nested function refers to itself by its own name, so it needs no `rec`. A lite
     fact(n: int) -> int => if n <= 1 then 1 else n * fact(n - 1) fi;
 ```
 
-A nested function is a local, so it is defined from its own definition onward. A reference to it above its definition is an error. Mutual recursion between two nested functions is an error. To get mutual recursion, write one of the pair as a `let mut` literal and assign it after the other is defined. A file's top-level statements are not a body, so a named function among them is a namespace-scope function, and its argument types are required.
+A nested function is a local of the body it is written in. One that nothing refers to above its definition is defined from its definition onward. One that a statement or another nested function above it refers to exists from the start of the body, so a body can call a nested function written below the call, and nested functions can call each other in any order. Where such a function uses a local the body declares further down, it exists from just after that local instead, and a call above that point is an error. A named function written among a file's top-level statements with types in its signature is a namespace-scope function, and its argument types are required. One written with no types at all is described with top-level statements, under [namespaces and `use`](#namespaces-and-use).
 
 A call with `*` written for one or more of its arguments is a *partial application*: a function value with one parameter per `*`, in order, that makes the call with its parameters in those positions. The other arguments are evaluated once, where the partial application is written, not on each call:
 
@@ -895,6 +912,22 @@ class TALLY: Counted is
     init() is count = 0; si
 si
 ```
+
+`Ghul.Parsable[T]` is the trait of a type whose values can be read from text. On .NET it is `System.IParsable<T>`, and `Ghul.FormatProvider` is `System.IFormatProvider`, so the BCL's types satisfy it as they are. Used as a bound, it lets generic code call the type's static `try_parse` through the type parameter. The call is resolved by the type argument, so it is made only as `T.try_parse(...)` on a type parameter the trait bounds, not on an instance or on the trait itself:
+
+```ghul
+read_or[T: Ghul.Parsable[T]](text: string, fallback: T) -> T is
+    let value: T mut = _
+
+    if T.try_parse(text, null, value ref) then
+        return value
+    fi
+
+    return fallback
+si
+```
+
+The global `parse[T](text) -> T?` is built the same way, and `use default` imports it. It gives the value `text` holds, or null where it holds none, for a value type `T`: `parse[int]("42")` is 42 and `parse[int]("x")` is null. `T` can come from the type expected, as in `let n: int? = parse(line)`. On every target, `int`, `uint`, `long`, `ulong` and `double` are `Parsable`.
 
 *More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#traits).*
 
