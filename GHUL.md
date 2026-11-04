@@ -115,7 +115,7 @@ write_line("{seen.count}")
 
 Anywhere else, such as in a namespace block or a file without top-level statements, a function with no return type returns void, its return type isn't inferred, and every parameter needs its type.
 
-Such a function is private to the file. The editor shows a `file-private-function` hint at its definition. A function with types in its signature that calls such a function is private to the file in the same way, unless a class, a trait or a function that stays global uses it. A class, a trait, a generic function or another file cannot call either kind: a function used from any of them needs its types, and so does everything it calls. The functions are placed before the first statement that uses one of them, so they can be written in any order, and they can call each other. Like a function literal, such a function can be marked `memo` or `pure`: `fib(n) memo => ...`.
+Such a function is private to the file. A function with types in its signature that calls such a function is private to the file in the same way, unless a class, a trait or a function that stays global uses it. A class, a trait, a generic function, an operator or another file cannot call either kind: a function used from any of them needs its types, and so does everything it calls. An operator is never private to the file, so a function with no types that it calls needs its types. The functions are placed before the first statement that uses one of them, so they can be written in any order, and they can call each other. Like a function literal, such a function can be marked `memo` or `pure`: `fib(n) memo => ...`.
 
 A `use` statement brings names into scope, so code can refer to them without qualification. A `use` of a namespace imports every public symbol in it. A `use` of a single symbol imports that symbol:
 
@@ -234,12 +234,14 @@ tree = Tree.NODE(tree, 1, Tree.EMPTY);
 
 let pet mut = CAT();           // Animal
 pet = DOG();
+
+let xs mut = LIST([1, 2]);     // int[], the list trait both implement
+xs = [3, 4];
 ```
 
-The compiler uses the join only when it is a type that the author wrote. In these cases the local keeps the type of its initializer, and the compiler reports the assignment:
+In these cases the local keeps the type of its initializer, and the compiler reports the assignment:
 
 - the join is `object` or `System.ValueType`
-- the join is a trait, and neither the initializer nor any assigned value has that trait as its type
 - the initializer or an assigned value is a value type
 
 So `let i mut = 0; i = 1L` is an error, and so is assigning a value of an unrelated class. A written type (`let pet: Animal mut = CAT()`) always fixes this.
@@ -1789,7 +1791,7 @@ A function literal whose body contains `yield` is also a generator. It captures 
 
 1. its declared return type
 2. the slot it is assigned to, when that slot expects a `Pipe[T]`, `Iterable[T]` or `Iterator[T]`
-3. its first `yield`
+3. the join of the types its `yield`s produce, as a function's return type is the join of its `return`s: yields of a `Cat` and a `Dog` give `Animal`, and yields that share no type but `object` give `object`
 
 A generator literal whose element type none of these decides is an error. A nested named function that yields is also a generator literal. It refers to itself by name for `yield in`:
 
