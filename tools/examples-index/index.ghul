@@ -32,7 +32,7 @@ read_or_null(path: string) -> string? =>
     if IO.File.exists(path) then IO.File.read_all_text(path).replace("\r\n", "\n") else null fi
 
 is_piece_name(name: string) -> bool =>
-    name.length > 3 /\ char.is_digit(name[0]) /\ char.is_digit(name[1]) /\ name[2] == '-'
+    name.length > 3 /\ name[0].is_digit /\ name[1].is_digit /\ name[2] == '-'
 
 piece_names(slug: string) -> LIST[string] is
     let names = IO.Directory.get_directories("examples/{slug}")
