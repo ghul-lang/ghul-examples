@@ -4,12 +4,12 @@ use IO.Std.write_line
 // case works the same way when there are more choices - see the
 // pattern-matching example:
 
-let day_of_week = System.DateTime(2026, 9, 28).day_of_week
+let day_of_week = Time.DATE_TIME(2026, 9, 28).day_of_week
 
 let greeting =
-    if day_of_week == System.DayOfWeek.MONDAY then
+    if day_of_week == Time.DayOfWeek.MONDAY then
         "ugh: monday"
-    elif day_of_week == System.DayOfWeek.FRIDAY then
+    elif day_of_week == Time.DayOfWeek.FRIDAY then
         "woooo: friday!"
     else
         "meh: {day_of_week.to_string().to_lower()}"
