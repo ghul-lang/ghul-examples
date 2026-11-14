@@ -44,7 +44,7 @@ namespace Sqlite is
             _db = db
         si
 
-        /// Runs `sql`, which may hold several statements and answers no rows.
+        /// Runs `sql`, which can hold several statements and answers no rows.
         exec(sql: string) is
             _check(Raw.exec(_db, sql))
         si
