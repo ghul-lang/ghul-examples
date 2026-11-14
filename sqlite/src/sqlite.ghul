@@ -1,0 +1,195 @@
+// One SQLite API on every target, over the per-target functions in
+// Sqlite.Raw: a connection and a statement that are disposable, errors as
+// exceptions, and a statement's rows as a lazy sequence.
+namespace Sqlite is
+    use Collections.Iterable
+
+    /// What SQLite reported when a call failed.
+    class SqliteException: Ghul.Exception is
+        /// SQLite's result code.
+        code: int public
+
+        init(code: int, message: string) is
+            super.init("sqlite error {code}: {message}")
+            self.code = code
+        si
+    si
+
+    /// The type of a column's value in the current row.
+    enum ColumnType is
+        INTEGER = 1,
+        FLOAT = 2,
+        TEXT = 3,
+        BLOB = 4,
+        NULL = 5
+    si
+
+    /// An open database.
+    class CONNECTION: Ghul.Disposable is
+        _db: word
+
+        /// Opens the database file at `path`, creating it if it does not exist;
+        /// ":memory:" opens a database held in memory.
+        init(path: string) is
+            let (code, db) = Raw.open(path)
+
+            if code != 0 then
+                let message = if db != 0w then Raw.errmsg(db) ?? "" else "out of memory" fi
+
+                if db != 0w then
+                    Raw.close(db)
+                fi
+
+                throw SqliteException(code, message)
+            fi
+
+            _db = db
+        si
+
+        /// Runs `sql`, which may hold several statements and answers no rows.
+        exec(sql: string) is
+            _check(Raw.exec(_db, sql))
+        si
+
+        /// The statement `sql`, compiled, with no values bound.
+        prepare(sql: string) -> STATEMENT is
+            let (code, statement) = Raw.prepare(_db, sql)
+
+            _check(code)
+
+            return STATEMENT(self, statement)
+        si
+
+        /// How many rows the last statement inserted, changed or deleted.
+        changes: int => Raw.changes(_db)
+
+        /// Closes the database.
+        dispose() is
+            if _db != 0w then
+                Raw.close(_db)
+                _db = 0w
+            fi
+        si
+
+        check(code: int) => _check(code)
+
+        _check(code: int) is
+            if code != 0 /\ code != 100 /\ code != 101 then
+                throw SqliteException(code, Raw.errmsg(_db) ?? "")
+            fi
+        si
+    si
+
+    /// A compiled statement. Values bound with `bind` stay bound until they
+    /// are bound again; reading `rows` runs the statement from the start.
+    class STATEMENT: Ghul.Disposable is
+        _connection: CONNECTION
+        _statement: word
+
+        init(connection: CONNECTION, statement: word) is
+            _connection = connection
+            _statement = statement
+        si
+
+        /// Binds `value` to the parameter numbered `index`, from 1.
+        bind(index: int, value: long) -> STATEMENT is
+            _connection.check(Raw.bind_int64(_statement, index, value))
+            return self
+        si
+
+        /// Binds `value` to the parameter numbered `index`, from 1.
+        bind(index: int, value: int) -> STATEMENT => bind(index, long(value))
+
+        /// Binds `value` to the parameter numbered `index`, from 1.
+        bind(index: int, value: double) -> STATEMENT is
+            _connection.check(Raw.bind_double(_statement, index, value))
+            return self
+        si
+
+        /// Binds `value`, or SQL NULL when it is absent, to the parameter
+        /// numbered `index`, from 1.
+        bind(index: int, value: string?) -> STATEMENT is
+            if let text = value then
+                _connection.check(Raw.bind_text(_statement, index, text))
+            else
+                _connection.check(Raw.bind_null(_statement, index))
+            fi
+
+            return self
+        si
+
+        /// Binds the bytes `value` as a blob to the parameter numbered
+        /// `index`, from 1.
+        bind_blob(index: int, value: ARRAY[ubyte]) -> STATEMENT is
+            _connection.check(Raw.bind_blob(_statement, index, value))
+            return self
+        si
+
+        /// Binds SQL NULL to the parameter numbered `index`, from 1.
+        bind_null(index: int) -> STATEMENT is
+            _connection.check(Raw.bind_null(_statement, index))
+            return self
+        si
+
+        /// Runs a statement that answers no rows, from the start.
+        run() is
+            let code = Raw.step(_statement)
+            Raw.reset(_statement)
+            _connection.check(code)
+        si
+
+        /// The statement's rows, read as the sequence is read. Each row is
+        /// valid until the next is read.
+        rows: Iterable[ROW] is
+            Raw.reset(_statement)
+
+            while true do
+                let code = Raw.step(_statement)
+
+                if code == 101 then
+                    break
+                fi
+
+                _connection.check(code)
+
+                yield ROW(_statement)
+            od
+        si
+
+        /// Finalizes the statement.
+        dispose() is
+            if _statement != 0w then
+                Raw.finalize(_statement)
+                _statement = 0w
+            fi
+        si
+    si
+
+    /// The current row of a statement, read by column index from 0.
+    class ROW is
+        _statement: word
+
+        init(statement: word) is
+            _statement = statement
+        si
+
+        /// How many columns the row has.
+        count: int => Raw.column_count(_statement)
+
+        /// The name of the column at `index`.
+        name(index: int) -> string => Raw.column_name(_statement, index) ?? ""
+
+        /// The type of the value in the column at `index`.
+        type(index: int) -> ColumnType => cast ColumnType(Raw.column_type(_statement, index))
+
+        is_null(index: int) -> bool => Raw.column_type(_statement, index) == 5
+
+        integer(index: int) -> long => Raw.column_int64(_statement, index)
+
+        real(index: int) -> double => Raw.column_double(_statement, index)
+
+        text(index: int) -> string? => Raw.column_text(_statement, index)
+
+        blob(index: int) -> ARRAY[ubyte]? => Raw.column_blob(_statement, index)
+    si
+si

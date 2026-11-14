@@ -1,0 +1,109 @@
+// The SQLite C API on the llvm target, called directly through @extern. A
+// handle is the C pointer as a word; an out-parameter is a `word ref`; a blob
+// crosses as an ARRAY[ubyte].
+@IF.llvm()
+namespace Sqlite.Raw is
+    @extern("", "sqlite3_open")
+    _open(path: string, db: word ref) -> int
+
+    open(path: string) -> (code: int, db: word) is
+        let db mut = 0w
+        let code = _open(path, db ref)
+        return (code = code, db = db)
+    si
+
+    @extern("", "sqlite3_close_v2")
+    close(db: word) -> int
+
+    @extern("", "sqlite3_errmsg", result = "copy")
+    errmsg(db: word) -> string?
+
+    @extern("", "sqlite3_exec")
+    _exec(db: word, sql: string, callback: word, argument: word, error: word) -> int
+
+    exec(db: word, sql: string) -> int => _exec(db, sql, 0w, 0w, 0w)
+
+    @extern("", "sqlite3_prepare_v2")
+    _prepare(db: word, sql: string, length: int, statement: word ref, tail: word) -> int
+
+    prepare(db: word, sql: string) -> (code: int, statement: word) is
+        let statement mut = 0w
+        let code = _prepare(db, sql, -1, statement ref, 0w)
+        return (code = code, statement = statement)
+    si
+
+    @extern("", "sqlite3_bind_int64")
+    bind_int64(statement: word, index: int, value: long) -> int
+
+    @extern("", "sqlite3_bind_double")
+    bind_double(statement: word, index: int, value: double) -> int
+
+    @extern("", "sqlite3_bind_text")
+    _bind_text(statement: word, index: int, value: string, length: int, destructor: word) -> int
+
+    // SQLITE_TRANSIENT, (sqlite3_destructor_type)-1: SQLite copies the text
+    // and the bytes, which are valid for the call only.
+    bind_text(statement: word, index: int, value: string) -> int => _bind_text(statement, index, value, -1, -1w)
+
+    @extern("", "sqlite3_bind_null")
+    bind_null(statement: word, index: int) -> int
+
+    @extern("", "sqlite3_bind_blob")
+    _bind_blob(statement: word, index: int, bytes: ARRAY[ubyte], length: int, destructor: word) -> int
+
+    bind_blob(statement: word, index: int, bytes: ARRAY[ubyte]) -> int => _bind_blob(statement, index, bytes, bytes.count, -1w)
+
+    @extern("", "sqlite3_step")
+    step(statement: word) -> int
+
+    @extern("", "sqlite3_reset")
+    reset(statement: word) -> int
+
+    @extern("", "sqlite3_finalize")
+    finalize(statement: word) -> int
+
+    @extern("", "sqlite3_column_count")
+    column_count(statement: word) -> int
+
+    @extern("", "sqlite3_column_type")
+    column_type(statement: word, index: int) -> int
+
+    @extern("", "sqlite3_column_name", result = "copy")
+    column_name(statement: word, index: int) -> string?
+
+    @extern("", "sqlite3_column_int64")
+    column_int64(statement: word, index: int) -> long
+
+    @extern("", "sqlite3_column_double")
+    column_double(statement: word, index: int) -> double
+
+    @extern("", "sqlite3_column_text", result = "copy")
+    column_text(statement: word, index: int) -> string?
+
+    @extern("", "sqlite3_column_blob")
+    _column_blob(statement: word, index: int) -> word
+
+    @extern("", "sqlite3_column_bytes")
+    _column_bytes(statement: word, index: int) -> int
+
+    @extern("", "memcpy")
+    _copy(destination: ARRAY[ubyte], source: word, count: word) -> word
+
+    column_blob(statement: word, index: int) -> ARRAY[ubyte]? is
+        if column_type(statement, index) == 5 then
+            return null
+        fi
+
+        let length = _column_bytes(statement, index)
+        let bytes = Ghul.Pipes.repeat(0ub, length) |> ARRAY()
+
+        if length > 0 then
+            _copy(bytes, _column_blob(statement, index), word(length))
+        fi
+
+        return bytes
+    si
+
+    @extern("", "sqlite3_changes")
+    changes(db: word) -> int
+si

@@ -1,0 +1,119 @@
+// The SQLite C API on .NET: @extern is DllImport, so a handle comes back
+// through a `ref` out-parameter and a blob crosses as an ARRAY[ubyte], but a
+// string cannot be returned: text and blobs come back as pointers that the
+// System.Runtime.InteropServices.Marshal functions read.
+@IF.dotnet()
+namespace Sqlite.Raw is
+    use Marshal = System.Runtime.InteropServices.Marshal
+
+    // The system library: the distribution ships libsqlite3.so.0 and, without
+    // its development package, no libsqlite3.so for "sqlite3" to find.
+    @extern("libsqlite3.so.0", "sqlite3_open")
+    _open(path: string, db: word ref) -> int
+
+    open(path: string) -> (code: int, db: word) is
+        let db mut = 0w
+        let code = _open(path, db ref)
+        return (code = code, db = db)
+    si
+
+    @extern("libsqlite3.so.0", "sqlite3_close_v2")
+    close(db: word) -> int
+
+    @extern("libsqlite3.so.0", "sqlite3_errmsg")
+    _errmsg(db: word) -> word
+
+    errmsg(db: word) -> string? => _utf8(_errmsg(db))
+
+    @extern("libsqlite3.so.0", "sqlite3_exec")
+    _exec(db: word, sql: string, callback: word, argument: word, error: word) -> int
+
+    exec(db: word, sql: string) -> int => _exec(db, sql, 0w, 0w, 0w)
+
+    @extern("libsqlite3.so.0", "sqlite3_prepare_v2")
+    _prepare(db: word, sql: string, length: int, statement: word ref, tail: word) -> int
+
+    prepare(db: word, sql: string) -> (code: int, statement: word) is
+        let statement mut = 0w
+        let code = _prepare(db, sql, -1, statement ref, 0w)
+        return (code = code, statement = statement)
+    si
+
+    @extern("libsqlite3.so.0", "sqlite3_bind_int64")
+    bind_int64(statement: word, index: int, value: long) -> int
+
+    @extern("libsqlite3.so.0", "sqlite3_bind_double")
+    bind_double(statement: word, index: int, value: double) -> int
+
+    @extern("libsqlite3.so.0", "sqlite3_bind_text")
+    _bind_text(statement: word, index: int, value: string, length: int, destructor: word) -> int
+
+    bind_text(statement: word, index: int, value: string) -> int => _bind_text(statement, index, value, -1, -1w)
+
+    @extern("libsqlite3.so.0", "sqlite3_bind_null")
+    bind_null(statement: word, index: int) -> int
+
+    @extern("libsqlite3.so.0", "sqlite3_bind_blob")
+    _bind_blob(statement: word, index: int, bytes: ARRAY[ubyte], length: int, destructor: word) -> int
+
+    bind_blob(statement: word, index: int, bytes: ARRAY[ubyte]) -> int => _bind_blob(statement, index, bytes, bytes.count, -1w)
+
+    @extern("libsqlite3.so.0", "sqlite3_step")
+    step(statement: word) -> int
+
+    @extern("libsqlite3.so.0", "sqlite3_reset")
+    reset(statement: word) -> int
+
+    @extern("libsqlite3.so.0", "sqlite3_finalize")
+    finalize(statement: word) -> int
+
+    @extern("libsqlite3.so.0", "sqlite3_column_count")
+    column_count(statement: word) -> int
+
+    @extern("libsqlite3.so.0", "sqlite3_column_type")
+    column_type(statement: word, index: int) -> int
+
+    @extern("libsqlite3.so.0", "sqlite3_column_name")
+    _column_name(statement: word, index: int) -> word
+
+    column_name(statement: word, index: int) -> string? => _utf8(_column_name(statement, index))
+
+    @extern("libsqlite3.so.0", "sqlite3_column_int64")
+    column_int64(statement: word, index: int) -> long
+
+    @extern("libsqlite3.so.0", "sqlite3_column_double")
+    column_double(statement: word, index: int) -> double
+
+    @extern("libsqlite3.so.0", "sqlite3_column_text")
+    _column_text(statement: word, index: int) -> word
+
+    column_text(statement: word, index: int) -> string? => _utf8(_column_text(statement, index))
+
+    @extern("libsqlite3.so.0", "sqlite3_column_blob")
+    _column_blob(statement: word, index: int) -> word
+
+    @extern("libsqlite3.so.0", "sqlite3_column_bytes")
+    _column_bytes(statement: word, index: int) -> int
+
+    column_blob(statement: word, index: int) -> ARRAY[ubyte]? is
+        if column_type(statement, index) == 5 then
+            return null
+        fi
+
+        let pointer = _column_blob(statement, index)
+        let length = _column_bytes(statement, index)
+        let bytes = Ghul.Pipes.repeat(0ub, length) |> ARRAY()
+
+        if length > 0 then
+            Marshal.copy(pointer, bytes, 0, length)
+        fi
+
+        return bytes
+    si
+
+    @extern("libsqlite3.so.0", "sqlite3_changes")
+    changes(db: word) -> int
+
+    _utf8(pointer: word) -> string? =>
+        if pointer == 0w then null else Marshal.ptr_to_string_u_t_f8(pointer) fi
+si

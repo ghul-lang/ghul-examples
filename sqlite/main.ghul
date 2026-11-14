@@ -1,0 +1,38 @@
+// The same program on every target: a table with each column type, bound
+// and read back through the portable API, and an error surfacing as an
+// exception.
+use IO.Std.write_line
+use Sqlite.CONNECTION
+use Sqlite.SqliteException
+
+let db = CONNECTION(":memory:")
+
+db.exec("create table t (id integer primary key, n integer, x real, s text, b blob)")
+
+let insert = db.prepare("insert into t (n, x, s, b) values (?1, ?2, ?3, ?4)")
+
+insert.bind(1, 9_000_000_000L).bind(2, 2.5).bind(3, "héllo €").bind_blob(4, ARRAY[ubyte]([0ub, 1ub, 254ub, 255ub])).run()
+insert.bind(1, -1).bind(2, -0.25).bind(3, null).bind_null(4).run()
+
+write_line("changes {db.changes}")
+
+insert.dispose()
+
+let select = db.prepare("select id, n, x, s, b from t order by id")
+
+for row in select.rows do
+    let blob = row.blob(4)
+    let shown = if let b = blob then Text.to_hex_lower(b) else "null" fi
+    write_line("{row.integer(0)} {row.integer(1)} {row.real(2)} {row.text(3) ?? "null"} {shown} {row.type(3)} {row.name(1)}")
+od
+
+select.dispose()
+
+try
+    db.exec("select * from missing")
+catch e: SqliteException
+    write_line("caught {e.code}: {e.message}")
+yrt
+
+db.dispose()
+write_line("done")

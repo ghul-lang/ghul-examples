@@ -10,6 +10,7 @@
   <ItemGroup>
     <GhulSources Include="examples/**/*.ghul" />
     <GhulSources Include="root/**/*.ghul" />
+    <GhulSources Include="sqlite/**/*.ghul" />
 
     <!-- Terminator-free sources; error on CI so stray `;` cannot creep
          back in, warning locally. The per-test projects compile the same

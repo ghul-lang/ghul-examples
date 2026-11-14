@@ -1,0 +1,11 @@
+{
+    "name": "sqlite",
+    "kind": "program",
+    "version": "0.1.0",
+    "targets": ["wasm", "llvm"],
+    "sources": ["main.ghul", "src/**/*.ghul"],
+    "requires": { "compiler": ">=72.6.0" },
+    "dependencies": { "ghul-runtime": { "version": ">=42.0.0" } },
+    "wasm": { "externs": "host/sqlite-externs.mjs" },
+    "llvm": { "link": ["build/libsqlite3.a"] }
+}
