@@ -1,6 +1,4 @@
-// One SQLite API on every target, over the per-target functions in
-// Sqlite.Raw: a connection and a statement that are disposable, errors as
-// exceptions, and a statement's rows as a lazy sequence.
+// the portable api over the per-target Sqlite.Raw functions
 namespace Sqlite is
     use Collections.Iterable
 

@@ -1,6 +1,4 @@
-// The SQLite C API on the llvm target, called directly through @extern. A
-// handle is the C pointer as a word; an out-parameter is a `word ref`; a blob
-// crosses as an ARRAY[ubyte].
+// sqlite on llvm: direct calls into the linked static library
 @IF.llvm()
 namespace Sqlite.Raw is
     @extern("", "sqlite3_open")

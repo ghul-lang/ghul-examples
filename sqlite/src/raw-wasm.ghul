@@ -1,6 +1,4 @@
-// The SQLite API on the wasm target: each function is one the host supplies
-// through options.externs (host/sqlite-externs.mjs answers them from
-// node:sqlite). A handle is a number the host keeps a table of.
+// sqlite on wasm: functions the host supplies from node:sqlite
 @IF.wasm()
 namespace Sqlite.Raw is
     @extern("", "sqlite_open")
@@ -49,7 +47,7 @@ namespace Sqlite.Raw is
     @extern("", "sqlite_bind_blob_hex")
     _bind_blob_hex(statement: word, index: int, hex: string) -> int
 
-    // A WasmGC array cannot cross to the host, so a blob crosses as hex.
+    // a WasmGC array cannot cross to the host, so a blob crosses as hex.
     bind_blob(statement: word, index: int, bytes: ARRAY[ubyte]) -> int => _bind_blob_hex(statement, index, Text.to_hex_lower(bytes))
 
     @extern("", "sqlite_step")

@@ -1,6 +1,4 @@
-// The same program on every target: a table with each column type, bound
-// and read back through the portable API, and an error surfacing as an
-// exception.
+// one program for every target: each column type, then an error as an exception
 use IO.Std.write_line
 use Sqlite.CONNECTION
 use Sqlite.SqliteException
