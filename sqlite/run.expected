@@ -1,0 +1,5 @@
+changes 1
+1 9000000000 2.5 héllo € 0001feff TEXT n
+2 -1 -0.25 null null NULL n
+caught 1: sqlite error 1: no such table: missing
+done

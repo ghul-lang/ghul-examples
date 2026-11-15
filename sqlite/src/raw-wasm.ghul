@@ -1,0 +1,88 @@
+// sqlite on wasm: functions the host supplies from node:sqlite
+@IF.wasm()
+namespace Sqlite.Raw is
+    @extern("", "sqlite_open")
+    _open(path: string) -> int
+
+    @extern("", "sqlite_opened")
+    _opened() -> word
+
+    open(path: string) -> (code: int, db: word) => (code = _open(path), db = _opened())
+
+    @extern("", "sqlite_close_v2")
+    close(db: word) -> int
+
+    @extern("", "sqlite_errmsg")
+    errmsg(db: word) -> string?
+
+    @extern("", "sqlite_exec")
+    _exec(db: word, sql: string, callback: word, argument: word, error: word) -> int
+
+    exec(db: word, sql: string) -> int => _exec(db, sql, 0w, 0w, 0w)
+
+    @extern("", "sqlite_prepare")
+    _prepare(db: word, sql: string) -> int
+
+    @extern("", "sqlite_prepared")
+    _prepared() -> word
+
+    prepare(db: word, sql: string) -> (code: int, statement: word) => (code = _prepare(db, sql), statement = _prepared())
+
+    @extern("", "sqlite_bind_int64")
+    bind_int64(statement: word, index: int, value: long) -> int
+
+    @extern("", "sqlite_bind_double")
+    bind_double(statement: word, index: int, value: double) -> int
+
+    @extern("", "sqlite_bind_text")
+    _bind_text(statement: word, index: int, value: string, length: int, destructor: word) -> int
+
+    // SQLITE_TRANSIENT, (sqlite3_destructor_type)-1: SQLite copies the text,
+    // which ghūl frees as soon as the call returns.
+    bind_text(statement: word, index: int, value: string) -> int => _bind_text(statement, index, value, -1, -1w)
+
+    @extern("", "sqlite_bind_null")
+    bind_null(statement: word, index: int) -> int
+
+    @extern("", "sqlite_bind_blob_hex")
+    _bind_blob_hex(statement: word, index: int, hex: string) -> int
+
+    // a WasmGC array cannot cross to the host, so a blob crosses as hex.
+    bind_blob(statement: word, index: int, bytes: ARRAY[ubyte]) -> int => _bind_blob_hex(statement, index, Text.to_hex_lower(bytes))
+
+    @extern("", "sqlite_step")
+    step(statement: word) -> int
+
+    @extern("", "sqlite_reset")
+    reset(statement: word) -> int
+
+    @extern("", "sqlite_finalize")
+    finalize(statement: word) -> int
+
+    @extern("", "sqlite_column_count")
+    column_count(statement: word) -> int
+
+    @extern("", "sqlite_column_type")
+    column_type(statement: word, index: int) -> int
+
+    @extern("", "sqlite_column_name")
+    column_name(statement: word, index: int) -> string?
+
+    @extern("", "sqlite_column_int64")
+    column_int64(statement: word, index: int) -> long
+
+    @extern("", "sqlite_column_double")
+    column_double(statement: word, index: int) -> double
+
+    @extern("", "sqlite_column_text")
+    column_text(statement: word, index: int) -> string?
+
+    @extern("", "sqlite_column_blob_hex")
+    _column_blob_hex(statement: word, index: int) -> string?
+
+    column_blob(statement: word, index: int) -> ARRAY[ubyte]? =>
+        if let hex = _column_blob_hex(statement, index) then Text.from_hex(hex) else null fi
+
+    @extern("", "sqlite_changes")
+    changes(db: word) -> int
+si
