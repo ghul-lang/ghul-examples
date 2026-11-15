@@ -1,14 +1,14 @@
 # SQLite from ghūl
 
 One SQLite API that runs on .NET, wasm and llvm. A program written against
-`Sqlite.CONNECTION`, `Sqlite.STATEMENT` and `Sqlite.ROW` runs unchanged on all
+`Sqlite.Connection`, `Sqlite.Statement` and `Sqlite.Row` runs unchanged on all
 three targets; only the functions underneath differ.
 
 ```ghul
 use IO.Std.write_line
-use Sqlite.CONNECTION
+use Sqlite.Connection
 
-let database = CONNECTION(":memory:")
+let database = Connection(":memory:")
 
 database.exec("create table t (id integer primary key, name text)")
 

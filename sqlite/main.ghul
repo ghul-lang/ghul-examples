@@ -1,9 +1,9 @@
 // one program for every target: each column type, then an error as an exception
 use IO.Std.write_line
-use Sqlite.CONNECTION
+use Sqlite.Connection
 use Sqlite.SqliteException
 
-let db = CONNECTION(":memory:")
+let db = Connection(":memory:")
 
 db.exec("create table t (id integer primary key, n integer, x real, s text, b blob)")
 

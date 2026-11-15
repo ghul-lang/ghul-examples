@@ -23,7 +23,7 @@ namespace Sqlite is
     si
 
     /// An open database.
-    class CONNECTION: Ghul.Disposable is
+    class Connection: Ghul.Disposable is
         _db: word
 
         /// Opens the database file at `path`, creating it if it does not exist;
@@ -50,12 +50,12 @@ namespace Sqlite is
         si
 
         /// The statement `sql`, compiled, with no values bound.
-        prepare(sql: string) -> STATEMENT is
+        prepare(sql: string) -> Statement is
             let (code, statement) = Raw.prepare(_db, sql)
 
             _check(code)
 
-            return STATEMENT(self, statement)
+            return Statement(self, statement)
         si
 
         /// How many rows the last statement inserted, changed or deleted.
@@ -80,33 +80,33 @@ namespace Sqlite is
 
     /// A compiled statement. Values bound with `bind` stay bound until they
     /// are bound again; reading `rows` runs the statement from the start.
-    class STATEMENT: Ghul.Disposable is
-        _connection: CONNECTION
+    class Statement: Ghul.Disposable is
+        _connection: Connection
         _statement: word
 
-        init(connection: CONNECTION, statement: word) is
+        init(connection: Connection, statement: word) is
             _connection = connection
             _statement = statement
         si
 
         /// Binds `value` to the parameter numbered `index`, from 1.
-        bind(index: int, value: long) -> STATEMENT is
+        bind(index: int, value: long) -> Statement is
             _connection.check(Raw.bind_int64(_statement, index, value))
             return self
         si
 
         /// Binds `value` to the parameter numbered `index`, from 1.
-        bind(index: int, value: int) -> STATEMENT => bind(index, long(value))
+        bind(index: int, value: int) -> Statement => bind(index, long(value))
 
         /// Binds `value` to the parameter numbered `index`, from 1.
-        bind(index: int, value: double) -> STATEMENT is
+        bind(index: int, value: double) -> Statement is
             _connection.check(Raw.bind_double(_statement, index, value))
             return self
         si
 
         /// Binds `value`, or SQL NULL when it is absent, to the parameter
         /// numbered `index`, from 1.
-        bind(index: int, value: string?) -> STATEMENT is
+        bind(index: int, value: string?) -> Statement is
             if let text = value then
                 _connection.check(Raw.bind_text(_statement, index, text))
             else
@@ -118,13 +118,13 @@ namespace Sqlite is
 
         /// Binds the bytes `value` as a blob to the parameter numbered
         /// `index`, from 1.
-        bind_blob(index: int, value: ARRAY[ubyte]) -> STATEMENT is
+        bind_blob(index: int, value: ARRAY[ubyte]) -> Statement is
             _connection.check(Raw.bind_blob(_statement, index, value))
             return self
         si
 
         /// Binds SQL NULL to the parameter numbered `index`, from 1.
-        bind_null(index: int) -> STATEMENT is
+        bind_null(index: int) -> Statement is
             _connection.check(Raw.bind_null(_statement, index))
             return self
         si
@@ -138,7 +138,7 @@ namespace Sqlite is
 
         /// The statement's rows, read as the sequence is read. Each row is
         /// valid until the next is read.
-        rows: Iterable[ROW] is
+        rows: Iterable[Row] is
             Raw.reset(_statement)
 
             while true do
@@ -150,7 +150,7 @@ namespace Sqlite is
 
                 _connection.check(code)
 
-                yield ROW(_statement)
+                yield Row(_statement)
             od
         si
 
@@ -164,7 +164,7 @@ namespace Sqlite is
     si
 
     /// The current row of a statement, read by column index from 0.
-    class ROW is
+    class Row is
         _statement: word
 
         init(statement: word) is
