@@ -84,23 +84,12 @@ namespace Sqlite.Raw is
     @extern("", "sqlite3_column_bytes")
     _column_bytes(statement: word, index: int) -> int
 
-    @extern("", "memcpy")
-    _copy(destination: ARRAY[ubyte], source: word, count: word) -> word
-
-    column_blob(statement: word, index: int) -> ARRAY[ubyte]? is
+    column_blob(statement: word, index: int) -> ARRAY[ubyte]? =>
         if column_type(statement, index) == 5 then
-            return null
+            null
+        else
+            Ghul.Interop.copy_bytes(_column_blob(statement, index), _column_bytes(statement, index))
         fi
-
-        let length = _column_bytes(statement, index)
-        let bytes = Ghul.Pipes.repeat(0ub, length) |> ARRAY()
-
-        if length > 0 then
-            _copy(bytes, _column_blob(statement, index), word(length))
-        fi
-
-        return bytes
-    si
 
     @extern("", "sqlite3_changes")
     changes(db: word) -> int
