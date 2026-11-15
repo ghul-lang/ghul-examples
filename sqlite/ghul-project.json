@@ -5,7 +5,7 @@
     "targets": ["wasm", "llvm"],
     "sources": ["main.ghul", "src/**/*.ghul"],
     "requires": { "compiler": ">=72.6.0" },
-    "dependencies": { "ghul-runtime": { "version": ">=42.0.0" } },
+    "dependencies": { "ghul-runtime": { "version": ">=42.3.0" } },
     "wasm": { "externs": "host/sqlite-externs.mjs" },
     "llvm": { "link": ["build/libsqlite3.a"] }
 }
