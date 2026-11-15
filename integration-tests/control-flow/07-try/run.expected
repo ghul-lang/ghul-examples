@@ -1,5 +1,5 @@
 we're pretty sure a wombat is the same as an elephant, right?
-err, maybe not: a wombat is not an elephant
+err, maybe not: caught AssertFailedException
 resource acquired
 caught: oops: exception with resource held
 resource released

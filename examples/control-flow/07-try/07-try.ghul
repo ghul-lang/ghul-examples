@@ -10,7 +10,7 @@ try
 catch ex: System.Exception
     assert ex.get_type() == typeof Ghul.AssertFailedException
 
-    write_line("err, maybe not: a wombat is not an elephant")
+    write_line("err, maybe not: caught {ex.get_type().name}")
 yrt
 
 // try finally for ensuring clean-up code is run:
