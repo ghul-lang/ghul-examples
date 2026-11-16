@@ -36,7 +36,7 @@ the number of changed rows, and a `SqliteException` for a failed statement.
 | --- | --- |
 | `src/sqlite.ghul` | the portable API, written only against `Sqlite.Raw` |
 | `src/raw-dotnet.ghul` | `Sqlite.Raw` on .NET: `@extern` calls into `libsqlite3.so.0` |
-| `src/raw-llvm.ghul` | `Sqlite.Raw` on llvm: `@extern` calls linked with a static `libsqlite3.a` |
+| `src/raw-llvm.ghul` | `Sqlite.Raw` on llvm: `@extern` calls into the system's `libsqlite3.so.0` |
 | `src/raw-wasm.ghul` | `Sqlite.Raw` on wasm: `@extern` calls supplied by `host/sqlite-externs.mjs` |
 | `host/sqlite-externs.mjs` | the wasm layer, written over Node's `node:sqlite` |
 | `ghul-project.json` | the wasm and llvm build, through `ghul` |
@@ -62,7 +62,8 @@ In short:
 ## running it
 
 The .NET SDK 10, `ghul` (the ghul-cli tool) and Node.js 22.5 or later are
-needed. `libsqlite3.so.0` must be installed for the .NET target.
+needed, and `libsqlite3.so.0` must be installed for the .NET and llvm targets
+(`libsqlite3-0` on Debian and Ubuntu).
 
 ```sh
 dotnet run --project sqlite.ghulproj    # .NET
@@ -71,13 +72,20 @@ ghul run --target llvm                  # llvm
 ./run-all.sh                            # all three, compared with run.expected
 ```
 
-### the musl static archive
+### linking
 
-The llvm target links SQLite statically against musl. `ghul-project.json`
-expects the archive at `build/libsqlite3.a`. To build it, download the SQLite
-amalgamation from <https://sqlite.org/download.html> and compile `sqlite3.c`
-with a musl toolchain (`musl-gcc`, `zig cc -target x86_64-linux-musl`, or gcc
-in an Alpine container):
+The llvm build is linked dynamically against the system's glibc and SQLite:
+`ghul-project.json` sets `"link-mode": "dynamic"` and declares SQLite under
+`llvm.native`, with its soname, `libsqlite3.so.0`. Only SQLite's runtime
+package is needed, not its development package, and the build needs no C
+compiler. The program then needs SQLite on the machine it runs on.
+
+To link statically instead, so the program runs on any Linux, set `link-mode`
+to `static`, build SQLite for musl and add the archive to `llvm.link` as
+`build/libsqlite3.a`. To build it, download the SQLite amalgamation from
+<https://sqlite.org/download.html> and compile `sqlite3.c` with a musl
+toolchain (`musl-gcc`, `zig cc -target x86_64-linux-musl`, or gcc in an
+Alpine container):
 
 ```sh
 mkdir -p build
@@ -93,6 +101,7 @@ threads.
 ## continuous integration
 
 CI builds the .NET layer with the rest of the examples, so a change that no
-longer compiles is caught. CI doesn't run the example: the llvm target needs
-the musl archive above, and the repository's CI image has neither it nor Node's
-`node:sqlite`. Run `./run-all.sh` locally after a change.
+longer compiles is caught, and builds and runs the llvm build, linked against
+the runner's `libsqlite3.so.0`, comparing what it prints with `run.expected`.
+CI doesn't run the wasm build, which needs Node's `node:sqlite`. Run
+`./run-all.sh` locally after a change.

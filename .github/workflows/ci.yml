@@ -29,3 +29,40 @@ jobs:
 
     - name: Run Integration Tests
       run: dotnet ghul-test integration-tests
+
+  # The examples that call C, built for the native target with ghul-cli and
+  # linked dynamically against the runner's own libz.so.1 and
+  # libsqlite3.so.0: only the libraries' runtime packages are installed. Each
+  # program's output is compared with its run.expected.
+  native:
+    name: Run the native examples
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:10.0
+
+    timeout-minutes: 15
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Install the C libraries' runtime packages
+      run: |
+        apt-get update -qq
+        apt-get install -y -qq --no-install-recommends zlib1g libsqlite3-0
+
+    - name: Restore .NET tools
+      run: dotnet tool restore
+
+    - name: Run the zlib and sqlite examples natively
+      run: |
+        status=0
+        for example in zlib sqlite; do
+          if (cd "$example" && dotnet ghul build --target llvm && "./out/llvm/$example" > out/llvm.out) &&
+             diff -u "$example/run.expected" "$example/out/llvm.out"; then
+            echo "$example: same"
+          else
+            echo "$example: differs" >&2
+            status=1
+          fi
+        done
+        exit $status

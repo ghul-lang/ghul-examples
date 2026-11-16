@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Runs the example on .NET, wasm and llvm and checks each prints run.expected.
-# Needs the .NET SDK, ghul-cli, Node.js 22.5 or later (for node:sqlite),
-# libsqlite3.so.0, and build/libsqlite3.a built for musl (see README.md).
+# Needs the .NET SDK, ghul-cli, Node.js 22.5 or later (for node:sqlite), and
+# libsqlite3.so.0 (see README.md).
 set -euo pipefail
 cd "$(dirname "$0")"
 

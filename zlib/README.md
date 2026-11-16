@@ -118,5 +118,5 @@ ar rcs build/libz.a build/*.o
 
 ## continuous integration
 
-CI doesn't build or run this example: it is for the llvm target only, which
-the repository's CI doesn't build. Run `./run.sh` locally after a change.
+CI builds and runs the example on llvm, linked against the runner's
+`libz.so.1`, and compares what it prints with `run.expected`.

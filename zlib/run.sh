@@ -5,7 +5,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 mkdir -p build
-ghul run --target llvm > build/llvm.out 2>&1 || true
+ghul run --target llvm > build/llvm.out || true
 
 if diff -u run.expected build/llvm.out; then
     echo "llvm: same"
