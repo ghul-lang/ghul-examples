@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Runs the example on llvm and checks it prints run.expected. Needs ghul-cli and
-# build/libz.a built for musl (see README.md).
+# the system's zlib, which nearly every Linux has installed (see README.md).
 set -euo pipefail
 cd "$(dirname "$0")"
 
