@@ -1,0 +1,4 @@
+8800 bytes compressed to under 200: true
+round trip: true, in 138 calls to inflate
+adler-32: 1DBE830D, 1DBE830D
+not zlib data: incorrect header check (-3)

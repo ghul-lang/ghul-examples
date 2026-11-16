@@ -1,0 +1,143 @@
+// zlib on llvm: a z_stream that zlib keeps the address of across calls, held
+// in place by a pinner, with the buffers it points into pinned on the same one.
+namespace Zlib is
+    use Ghul.Interop.PINNER
+
+    // struct z_stream_s from zlib.h, field for field. On a 64-bit platform
+    // uLong is 8 bytes and uInt is 4, so C puts padding after each uInt; the
+    // layout promise is what puts it here too.
+    @layout("c")
+    struct ZStream is
+        next_in: word field public
+        avail_in: uint field public
+        total_in: ulong field public
+        next_out: word field public
+        avail_out: uint field public
+        total_out: ulong field public
+        msg: word field public
+        state: word field public
+        zalloc: word field public
+        zfree: word field public
+        opaque: word field public
+        data_type: int field public
+        adler: ulong field public
+        reserved: ulong field public
+
+        init() is si
+    si
+
+    // deflateInit and inflateInit are macros over these, passing the version
+    // and size of z_stream the caller was compiled against.
+    @extern("", "deflateInit_")
+    _deflate_init(stream: word, level: int, version: word, stream_size: int) -> int
+
+    @extern("", "deflate")
+    _deflate(stream: word, flush: int) -> int
+
+    @extern("", "deflateEnd")
+    _deflate_end(stream: word) -> int
+
+    @extern("", "inflateInit_")
+    _inflate_init(stream: word, version: word, stream_size: int) -> int
+
+    @extern("", "inflate")
+    _inflate(stream: word, flush: int) -> int
+
+    @extern("", "inflateEnd")
+    _inflate_end(stream: word) -> int
+
+    @extern("", "zlibVersion")
+    _version() -> word
+
+    // the return codes and flush values from zlib.h that these calls use
+    _OK() -> int => 0
+    _STREAM_END() -> int => 1
+    _NO_FLUSH() -> int => 0
+    _FINISH() -> int => 4
+
+    /// what zlib reported for a stream it couldn't carry on with
+    class ZlibException(code: int public, message: string): Ghul.Exception is
+        super(message)
+    si
+
+    /// what one run of a stream gives: the bytes, the Adler-32 checksum of the
+    /// uncompressed data, which zlib keeps in the stream as it goes, and how many
+    /// calls into zlib the stream took.
+    struct Output(bytes: ARRAY[ubyte] public, adler: ulong public, calls: int public)
+
+    /// data compressed in the zlib format at level, 0 to 9, written out
+    /// chunk bytes at a time.
+    compress(data: ARRAY[ubyte], level: int, chunk: int) -> Output =>
+        _run(data, chunk, true, stream => _deflate_init(stream, level, _version(), Ghul.Interop.size_of[ZStream]()))
+
+    /// data, compressed in the zlib format, expanded again, read out chunk
+    /// bytes at a time.
+    decompress(data: ARRAY[ubyte], chunk: int) -> Output =>
+        _run(data, chunk, false, stream => _inflate_init(stream, _version(), Ghul.Interop.size_of[ZStream]()))
+
+    // pins a z_stream and hands it all of data and a pinned output buffer,
+    // then calls zlib until the stream ends, taking what it wrote each time.
+    // Between calls zlib moves next_in and next_out along and counts down
+    // avail_in and avail_out in the pinned stream, which stream.value reads back.
+    // One pinner holds the stream and both buffers, and is disposed after the
+    // stream is ended, so zlib never holds an address that has been released.
+    _run(data: ARRAY[ubyte], chunk: int, is_deflate: bool, start: (word) -> int) -> Output is
+        let pins = PINNER()
+
+        try
+            let stream = pins.pin_struct(ZStream())
+            let buffer = Ghul.Pipes.repeat(0ub, chunk) |> ARRAY()
+            let buffer_address = pins.pin(buffer)
+
+            let s mut = stream.value
+            s.next_in = pins.pin(data)
+            s.avail_in = uint(data.count)
+            stream.value = s
+
+            _check(start(stream.address), stream.value)
+
+            let output = Collections.LIST[ubyte]()
+            let code mut = _OK()
+            let calls mut = 0
+
+            while code != _STREAM_END() do
+                let t mut = stream.value
+                t.next_out = buffer_address
+                t.avail_out = uint(chunk)
+                stream.value = t
+
+                calls = calls + 1
+                code = if is_deflate then _deflate(stream.address, _FINISH()) else _inflate(stream.address, _NO_FLUSH()) fi
+
+                if code != _STREAM_END() then
+                    _check(code, stream.value)
+                fi
+
+                let written = chunk - int(stream.value.avail_out)
+
+                for i in 0..written do
+                    output.add(buffer[i])
+                od
+            od
+
+            let adler = stream.value.adler
+
+            if is_deflate then
+                _deflate_end(stream.address)
+            else
+                _inflate_end(stream.address)
+            fi
+
+            return Output(output.to_array(), adler, calls)
+        finally
+            pins.dispose()
+        yrt
+    si
+
+    _check(code: int, stream: ZStream) is
+        if code != _OK() then
+            let message = Ghul.Interop.read_utf8(stream.msg) ?? "zlib error {code}"
+            throw ZlibException(code, message)
+        fi
+    si
+si
