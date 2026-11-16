@@ -49,6 +49,13 @@ namespace Zlib is
     @extern("", "zlibVersion")
     _version() -> word
 
+    @extern("", "zlibVersion", result = "copy")
+    _version_text() -> string?
+
+    /// the version of the zlib the program runs against, as zlib reports it:
+    /// the system's, which can be newer than the one it was built against
+    version() -> string => _version_text() ?? ""
+
     // the return codes and flush values from zlib.h that these calls use
     _ok() -> int => 0
     _stream_end() -> int => 1

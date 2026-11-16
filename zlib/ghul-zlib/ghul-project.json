@@ -1,0 +1,20 @@
+{
+    "name": "ghul-zlib",
+    "kind": "library",
+    "version": "0.1.0",
+    "targets": ["llvm"],
+    "sources": ["src/**/*.ghul"],
+    "requires": { "compiler": ">=73.1.0" },
+    "dependencies": { "ghul-runtime": { "version": ">=42.7.0" } },
+    "llvm": {
+        "native": {
+            "zlib": {
+                "soname": "libz.so.1",
+                "version": "^1.2.11",
+                "file-version": true,
+                "libraries": ["z"],
+                "install": { "debian": "zlib1g", "fedora": "zlib", "alpine": "zlib" }
+            }
+        }
+    }
+}
