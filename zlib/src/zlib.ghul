@@ -50,10 +50,10 @@ namespace Zlib is
     _version() -> word
 
     // the return codes and flush values from zlib.h that these calls use
-    _OK() -> int => 0
-    _STREAM_END() -> int => 1
-    _NO_FLUSH() -> int => 0
-    _FINISH() -> int => 4
+    _ok() -> int => 0
+    _stream_end() -> int => 1
+    _no_flush() -> int => 0
+    _finish() -> int => 4
 
     /// what zlib reported for a stream it couldn't carry on with
     class ZlibException(code: int public, message: string): Ghul.Exception is
@@ -97,19 +97,19 @@ namespace Zlib is
             _check(start(stream.address), stream.value)
 
             let output = Collections.LIST[ubyte]()
-            let code mut = _OK()
+            let code mut = _ok()
             let calls mut = 0
 
-            while code != _STREAM_END() do
+            while code != _stream_end() do
                 let t mut = stream.value
                 t.next_out = buffer_address
                 t.avail_out = uint(chunk)
                 stream.value = t
 
                 calls = calls + 1
-                code = if is_deflate then _deflate(stream.address, _FINISH()) else _inflate(stream.address, _NO_FLUSH()) fi
+                code = if is_deflate then _deflate(stream.address, _finish()) else _inflate(stream.address, _no_flush()) fi
 
-                if code != _STREAM_END() then
+                if code != _stream_end() then
                     _check(code, stream.value)
                 fi
 
@@ -135,7 +135,7 @@ namespace Zlib is
     si
 
     _check(code: int, stream: ZStream) is
-        if code != _OK() then
+        if code != _ok() then
             let message = Ghul.Interop.read_utf8(stream.msg) ?? "zlib error {code}"
             throw ZlibException(code, message)
         fi
