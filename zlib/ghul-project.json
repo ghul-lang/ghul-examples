@@ -1,0 +1,10 @@
+{
+    "name": "zlib",
+    "kind": "program",
+    "version": "0.1.0",
+    "targets": ["llvm"],
+    "sources": ["main.ghul", "src/**/*.ghul"],
+    "requires": { "compiler": ">=72.16.0" },
+    "dependencies": { "ghul-runtime": { "version": ">=42.7.0" } },
+    "llvm": { "link": ["build/libz.a"] }
+}

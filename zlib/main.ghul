@@ -1,0 +1,22 @@
+use default
+use Zlib
+
+let line = "the quick brown fox jumps over the lazy dog\n"
+let text = repeat(line, 200) |> string("")
+let data = Text.Encoding.utf8.get_bytes(text)
+
+// a 64-byte buffer makes zlib stop and pick up again many times, keeping its
+// place in the pinned z_stream between calls.
+let compressed = compress(data, 9, 64)
+write_line("{data.count} bytes compressed to under 200: {compressed.bytes.count < 200}")
+
+let restored = decompress(compressed.bytes, 64)
+write_line("round trip: {Text.Encoding.utf8.get_string(restored.bytes) =~ text}, in {restored.calls} calls to inflate")
+write_line("adler-32: {compressed.adler:X8}, {restored.adler:X8}")
+
+// what zlib reports for data it can't read comes back through the stream's msg.
+try
+    decompress(data, 64)
+catch e: ZlibException
+    write_line("not zlib data: {e.message} ({e.code})")
+yrt
