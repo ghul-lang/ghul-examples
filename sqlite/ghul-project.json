@@ -4,8 +4,19 @@
     "version": "0.1.0",
     "targets": ["wasm", "llvm"],
     "sources": ["main.ghul", "src/**/*.ghul"],
-    "requires": { "compiler": ">=72.6.0" },
+    "requires": { "compiler": ">=73.1.0" },
     "dependencies": { "ghul-runtime": { "version": ">=42.3.0" } },
     "wasm": { "externs": "host/sqlite-externs.mjs" },
-    "llvm": { "link": ["build/libsqlite3.a"] }
+    "llvm": {
+        "link-mode": "dynamic",
+        "requires": { "ghul-llvm": ">=1.11.0" },
+        "native": {
+            "sqlite": {
+                "soname": "libsqlite3.so.0",
+                "version": "^3.35.0",
+                "libraries": ["sqlite3"],
+                "install": { "debian": "libsqlite3-0", "fedora": "sqlite-libs", "alpine": "sqlite-libs" }
+            }
+        }
+    }
 }
