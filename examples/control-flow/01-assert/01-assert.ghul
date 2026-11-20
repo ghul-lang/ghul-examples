@@ -6,4 +6,4 @@ assert 3 > 2
 assert true else "who knows what to believe?"
 
 // or a specific object to throw:
-assert 1 < "hello".length else System.IndexOutOfRangeException()
+assert 1 < "hello".length else Ghul.IndexOutOfRangeException()

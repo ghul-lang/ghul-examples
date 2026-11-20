@@ -7,7 +7,7 @@ try
     write_line("we're pretty sure a {wombat} is the same as an {elephant}, right?")
 
     assert wombat =~ elephant
-catch ex: System.Exception
+catch ex: Ghul.Exception
     assert ex.get_type() == typeof Ghul.AssertFailedException
 
     write_line("err, maybe not: caught {ex.get_type().name}")
@@ -20,8 +20,8 @@ let is_resource_in_use mut = false
 try
     is_resource_in_use = true
     write_line("resource acquired")
-    throw System.Exception("oops: exception with resource held")
-catch ex: System.Exception
+    throw Ghul.Exception("oops: exception with resource held")
+catch ex: Ghul.Exception
     write_line("caught: {ex.message}")
 finally
     is_resource_in_use = false
