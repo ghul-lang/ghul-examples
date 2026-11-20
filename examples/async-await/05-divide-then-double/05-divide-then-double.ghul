@@ -7,7 +7,7 @@ double_async(x: int) -> Tasks.TASK[int] => x * 2
 checked_divide(a: int, b: int) -> Tasks.TASK[int] is
     if b == 0 then
         return Tasks.TASK.from_exception(
-            System.InvalidOperationException("division by zero")
+            Ghul.InvalidOperationException("division by zero")
         )
     fi
 
@@ -28,7 +28,7 @@ write_line("divide_then_double(20, 5) = {divide_then_double(20, 5).result}")
 try
     let result = divide_then_double(10, 0).result
     write_line("divide_then_double(10, 0) unexpected: {result}")
-catch ex: System.AggregateException
+catch ex: Ghul.AggregateException
     let cause = ex.get_base_exception()
 
     write_line("divide_then_double(10, 0) caught: {cause.message}")

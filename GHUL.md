@@ -46,7 +46,7 @@ ghūl keywords are lowercase. Identifiers follow a naming convention, and the co
 - `UPPER_SNAKE_CASE`: union variants, enum members
 - either: concrete classes and structs
 
-A concrete class or struct can be written either way. The standard library uses `UPPER_SNAKE_CASE` for its concrete types (`LIST`, `MAP`, `STRING_BUILDER`), and so do the few .NET types that ghūl renames. Every other .NET type keeps its .NET name. Example code and most programs use `PascalCase` for their own types (`Order`, `Point`).
+A concrete class or struct can be written either way. The standard library uses `UPPER_SNAKE_CASE` for its concrete types (`LIST`, `MAP`, `SET`), and so do the few .NET types that ghūl renames. Every other .NET type keeps its .NET name. Example code and most programs use `PascalCase` for their own types (`Order`, `Point`).
 
 A name of more than one letter is `PascalCase` only if it has a lower-case letter, so an all-caps word such as `TREE` is `UPPER_SNAKE_CASE` and not `PascalCase`. A single capital such as `T` is both.
 
@@ -359,7 +359,7 @@ let combined = "{prefix}{suffix}";                  // concatenation
 
 An interpolated expression can have an alignment and a format specifier, as in .NET: `{expr, alignment : format}`.
 
-A format applies to a number, and to a value whose type implements `System.IFormattable`. The value is written with its `to_string(format, format_provider)`, with no provider. A format on any other value is ignored, as on .NET. To make a type of your own accept a format, implement `System.IFormattable`.
+A format applies to a number, and to a value whose type implements `Ghul.Formattable`. The value is written with its `to_string(format, format_provider)`, with no provider. A format on any other value is ignored, as on .NET. To make a type of your own accept a format, implement `Ghul.Formattable`.
 
 ```ghul
 let padded = "[{value,12:F3}]";     // [    1500.000]
@@ -372,7 +372,7 @@ The static type of an interpolated value decides how it is written:
 - An optional is written as the value it holds, by these same rules, or as `null` when it holds no value.
 - Every other value is written by the runtime's `$`. This covers an array, a list, a tuple, a struct or class that declares no `to_string`, a value held as `object`, a trait and a type parameter. `$` writes a sequence as its elements in brackets, a tuple as its elements in parentheses, and a record as its type and members. Without `$`, these values would be written as their .NET type name.
 
-An alignment pads the text these rules give, and a format applies wherever they reach a number or a `System.IFormattable` value, including the value an optional holds. So `{xs,-12}` pads `[1, 2, 3]`, `{flag,6}` pads `true`, and an absent `{opt:F2}` is `null`.
+An alignment pads the text these rules give, and a format applies wherever they reach a number or a `Ghul.Formattable` value, including the value an optional holds. So `{xs,-12}` pads `[1, 2, 3]`, `{flag,6}` pads `true`, and an absent `{opt:F2}` is `null`.
 
 ```ghul
 struct POINT(x: int public, y: int public);
@@ -476,10 +476,10 @@ A **positional** target list `(a, b, ...)` matches the source by the first of th
 2. a `deconstruct(...)` instance method whose parameters are all `T ref`
 3. the positional members `` `0 ``, `` `1 ``, ...
 
-The `deconstruct` method covers .NET types such as `Collections.KEY_VALUE_PAIR[K, V]`, ghūl classes that write each `T ref` parameter with postfix `!`, and classes with a primary constructor, which get a synthesised `deconstruct` (see [primary constructors](#primary-constructors)). A type with none of these cannot be destructured positionally. Use the by-name form for it.
+The `deconstruct` method covers .NET types such as `Collections.KeyValuePair[K, V]`, ghūl classes that write each `T ref` parameter with postfix `!`, and classes with a primary constructor, which get a synthesised `deconstruct` (see [primary constructors](#primary-constructors)). A type with none of these cannot be destructured positionally. Use the by-name form for it.
 
 ```ghul
-for (key, value) in dict do          // KEY_VALUE_PAIR.deconstruct
+for (key, value) in dict do          // KeyValuePair.deconstruct
     write_line("{key}={value}");
 od
 
@@ -624,7 +624,7 @@ The single-parameter shorthand without parentheses (`x => …`) cannot have a pa
 ```ghul
 let add = ((a, b): (int, int)) => a + b;
 
-entries |> each(((key, value): Collections.KEY_VALUE_PAIR[string, int]) =>
+entries |> each(((key, value): Collections.KeyValuePair[string, int]) =>
     write_line("{key}={value}"));
 ```
 
@@ -1902,7 +1902,7 @@ The collection types are:
 - `Collections.LIST[T]`: the mutable list
 - `MAP` and `Map`: the mutable dictionary and its read-only trait, named in the same way as `LIST` and `List`
 - `SET`: the mutable hash set. `Set` (the .NET `IReadOnlySet<T>`) is its read-only trait, and `MutableSet` (`ISet<T>`) is its mutable trait.
-- `STACK`, `QUEUE`, `PRIORITY_QUEUE` and `LINKED_LIST`: the mutable stack, queue, priority queue and linked list
+- `STACK`, `QUEUE`, `PriorityQueue` and `LINKED_LIST`: the mutable stack, queue, priority queue and linked list
 - `MutableList`, `MutableMap`, `Bag` and `MutableBag`
 
 ghūl has no map literal syntax. To write a map with fixed contents, write a list literal of key and value pairs, and build the map from it with `MAP()`. The constructor throws if a key appears twice:
@@ -2181,7 +2181,7 @@ ghūl compiles to .NET IL, and can use most types in any .NET assembly. The comp
 
 - Method, property and field names become `snake_case`.
 - Enum members become `UPPER_SNAKE_CASE`.
-- Type names keep their .NET names, without .NET's generic arity suffix, except a short list of core types that ghūl names in `UPPER_SNAKE_CASE` (`LIST`, `MAP`, `SET`, `STRING_BUILDER`, `RANDOM`, `TASK`, ...), listed below. So `SortedSet<T>` is `Collections.SortedSet[T]`.
+- Type names keep their .NET names, without .NET's generic arity suffix, except a short list of core types that ghūl names in `UPPER_SNAKE_CASE` (`LIST`, `MAP`, `SET`, `TASK`, ...), listed below. So `SortedSet<T>` is `Collections.SortedSet[T]`.
 - The namespace `System.Collections.Generic` is `Collections`, and `System.IO` is `IO`.
 
 Some common types have different names:
@@ -2198,18 +2198,22 @@ The dotnet-integration page has the full table of names.
 The core types have ghūl names in ghūl namespaces:
 
 - `System.Exception` is `Ghul.Exception`. The common exceptions in `System` are also in `Ghul`: `Ghul.InvalidOperationException`, `Ghul.NotImplementedException`, `Ghul.ArgumentException` and the others.
-- `System.Text.StringBuilder` is `Text.STRING_BUILDER`.
+- `System.Text.StringBuilder` is `Text.StringBuilder`. The old spelling `Text.STRING_BUILDER` still works.
 - `System.Globalization.UnicodeCategory` is `Text.UnicodeCategory`.
-- The regular expression types in `System.Text.RegularExpressions` are `Text.REGEX`, `Text.MATCH`, `Text.GROUP`, `Text.MATCH_COLLECTION`, `Text.GROUP_COLLECTION` and `Text.RegexOptions`.
-- The date and time types are in `Time`: `System.DateTime`, `System.DateTimeOffset` and `System.TimeSpan` are `Time.DATE_TIME`, `Time.DATE_TIME_OFFSET` and `Time.TIME_SPAN`, `System.DayOfWeek` and `System.DateTimeKind` are `Time.DayOfWeek` and `Time.DateTimeKind`, `System.Diagnostics.Stopwatch` is `Time.STOPWATCH`, and `System.Globalization.ISOWeek` is `Time.ISO_WEEK`.
-- The rest of the text family is in `Text`, beside `Text.STRING_BUILDER` and `Text.REGEX`: `System.Text.Encoding` is `Text.Encoding`, `System.Text.Rune` is `Text.RUNE`, `System.Globalization.CultureInfo` is `Text.CULTURE`, `System.Globalization.NumberStyles` is `Text.NumberStyles`, and `Ghul.StringComparison` and `Ghul.StringSplitOptions` are `Text.StringComparison` and `Text.StringSplitOptions`. On wasm and llvm the only culture is the invariant one: `Text.CULTURE.invariant_culture` and `current_culture` are the same culture, and formatting, parsing and changing case work the same whichever culture is passed.
+- The regular expression types in `System.Text.RegularExpressions` are `Text.Regex`, `Text.Match`, `Text.Group`, `Text.MatchCollection`, `Text.GroupCollection` and `Text.RegexOptions`; the UPPER spellings still work.
+- The date and time types are in `Time`: `System.DateTime`, `System.DateTimeOffset` and `System.TimeSpan` are `Time.DateTime`, `Time.DateTimeOffset` and `Time.TimeSpan`, `System.DayOfWeek` and `System.DateTimeKind` are `Time.DayOfWeek` and `Time.DateTimeKind`, `System.Diagnostics.Stopwatch` is `Time.Stopwatch`, and `System.Globalization.ISOWeek` is `Time.IsoWeek`. The UPPER_SNAKE_CASE spellings (`Time.DATE_TIME` and the rest) still work.
+- The rest of the text family is in `Text`, beside `Text.StringBuilder` and `Text.Regex`: `System.Text.Encoding` is `Text.Encoding`, `System.Text.Rune` is `Text.Rune` (`Text.RUNE` still works), `System.Globalization.CultureInfo` is `Text.Locale`, `System.Globalization.NumberStyles` is `Text.NumberStyles`, `System.Text.UTF8Encoding`, `ASCIIEncoding`, `UTF32Encoding` and `UnicodeEncoding` are `Text.UTF8_ENCODING`, `Text.ASCII_ENCODING`, `Text.UTF32_ENCODING` and `Text.UTF16_ENCODING`, `System.Globalization.StringInfo` and `TextInfo` are `Text.StringInfo` and `Text.TextInfo`, and `Ghul.StringComparison` and `Ghul.StringSplitOptions` are `Text.StringComparison` and `Text.StringSplitOptions`. On wasm and llvm the only culture is the invariant one: `Text.Locale.invariant_culture` and `current_culture` are the same culture, and formatting, parsing and changing case work the same whichever culture is passed. `System.Text.Encoding.Unicode` is `Text.Encoding.utf16` on every target; `unicode` is not a name for it.
 - `Text` has functions for numbers in a base and bytes as text: `to_base(value, base)` writes an integer in base 2, 8, 10 or 16, and `from_base(text, base)` reads one back as a `long?`; `to_hex`, `to_hex_lower` and `from_hex` write and read bytes as hexadecimal; `to_base64` and `from_base64` do the same in Base64. Each `from_` function answers null for text it can't read. `System.Convert` is still there and still throws.
+- The numeric types are in `Ghul.Math`, beside the maths functions: `System.Numerics.Complex` is `Ghul.Math.Complex`, `System.Numerics.BitOperations` is `Ghul.Math.BitOperations` and `System.BitConverter` is `Ghul.Math.BitConverter`.
+- The reflection types are in `Ghul.Reflection`, beside `Ghul.Type`: `System.Reflection.Assembly`, `FieldInfo`, `ParameterInfo`, `ConstructorInfo`, `MethodInfo`, `PropertyInfo` and `BindingFlags` are the same names in `Ghul.Reflection`, and `System.Activator` is `Ghul.Reflection.Activator`.
+- The language's own types are in `Ghul`: `System.GC`, `System.ObsoleteAttribute`, `System.Runtime.CompilerServices.MethodImplAttribute` and `MethodImplOptions` are `Ghul.GC`, `Ghul.ObsoleteAttribute`, `Ghul.MethodImplAttribute` and `Ghul.MethodImplOptions`, and `System.IFormattable` is `Ghul.Formattable`. `System.Threading.Thread` is `Tasks.Thread`.
+- `System.Uri` is `IO.Uri`.
 - The hashes are in `Crypto`: `System.Security.Cryptography.MD5`, `SHA1` and `SHA256` are `Crypto.MD5`, `Crypto.SHA1` and `Crypto.SHA256`, and each has `hash_data(bytes)`, which returns the digest. `System.Security.Cryptography.RandomNumberGenerator`, the secure generator, is `Crypto.RandomNumberGenerator`.
-- `System.Random` is `Ghul.RANDOM`.
+- `System.Random` is `Ghul.Random`. The UPPER_SNAKE_CASE spelling `Ghul.RANDOM` still works.
 - `System.Type` is `Ghul.Type`.
-- `System.Lazy<T>` is `Ghul.LAZY[T]`.
+- `System.Lazy<T>` is `Ghul.Lazy[T]`; `Ghul.LAZY[T]` still works.
 - `System.FlagsAttribute` is `Ghul.FlagsAttribute`.
-- `KeyValuePair<K, V>` is `Collections.KEY_VALUE_PAIR[K, V]`.
+- `KeyValuePair<K, V>` is `Collections.KeyValuePair[K, V]`; `Collections.KEY_VALUE_PAIR` still works. `Ghul.Box`, `Collections.PriorityQueue`, `Ghul.Pipes.IndexedValue` and `Ghul.Interop.Pinned` are the PascalCase names of the library types that were `BOX`, `PRIORITY_QUEUE`, `INDEXED_VALUE` and `PINNED`; the old spellings still work.
 - `IComparer<T>` and `IEqualityComparer<T>` are `Collections.Comparer[T]` and `Collections.EqualityComparer[T]`, as above.
 
 The old name of each of these types still refers to the same type wherever a type can be named. A `use` of an old name imports the type under that old name. Diagnostics, hover and completion show only the new name.
@@ -2318,7 +2322,7 @@ The compiler resolves an overloaded name against the function or delegate type t
 A pragma whose name is not a compiler built-in names a .NET **attribute**. The compiler emits the attribute on the declaration that the pragma is written on. That declaration can be a class, trait, struct, union, variant or enum; a function or method; a field or property; or one parameter in the parameter list of a function, method or lambda literal. The short form `Foo` resolves to `FooAttribute` when there is no plain `Foo`. This applies in a `use` as well as in a pragma. So `use System.Obsolete` imports `System.ObsoleteAttribute`, and `use Marker = System.Obsolete` imports it as `Marker`. Attribute arguments can be positional, named (`name = value`), arrays, or `typeof`. An integer or enum argument can combine constants with `|`, `&` and `^`, as in `AttributeTargets.CLASS | AttributeTargets.METHOD`:
 
 ```ghul
-@System.Obsolete("use PRODUCT instead")
+@Ghul.Obsolete("use PRODUCT instead")
 class LEGACY_PRODUCT is
     init() is si
 si

@@ -4,7 +4,7 @@ use IO.Std.write_line
 // case works the same way when there are more choices - see the
 // pattern-matching example:
 
-let day_of_week = Time.DATE_TIME(2026, 9, 28).day_of_week
+let day_of_week = Time.DateTime(2026, 9, 28).day_of_week
 
 let greeting =
     if day_of_week == Time.DayOfWeek.MONDAY then
