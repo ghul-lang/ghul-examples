@@ -7,7 +7,7 @@ if [ ! -d $CASE ] ; then
     exit 1;
 fi
 
-if [ ! -f $CASE/ghulflags ] ; then
+if [ ! -f $CASE/test.json ] ; then
     echo "not run from a test case project"
     exit 1;
 fi
