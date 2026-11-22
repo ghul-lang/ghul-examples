@@ -2,6 +2,7 @@
   <!-- this dummy project is needed by the ghūl VSCode language extension: it uses it to find the reference assemblies -->
   
   <PropertyGroup>
+    <UpdateCompilerTool>true</UpdateCompilerTool>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <GhulCompiler>dotnet ghul-compiler --entry root_entry</GhulCompiler>
