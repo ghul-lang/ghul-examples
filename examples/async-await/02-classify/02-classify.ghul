@@ -1,9 +1,9 @@
 use IO.Std.write_line
 
-double_async(x: int) -> Tasks.TASK[int] => x * 2
+double_async(x: int) -> Concurrency.Future[int] => x * 2
 
 // a return after an await leaves the function, as it would anywhere else:
-classify(n: int) -> Tasks.TASK[string] is
+classify(n: int) -> Concurrency.Future[string] is
     let doubled = await double_async(n)
 
     if doubled > 50 then

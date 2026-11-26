@@ -1,9 +1,9 @@
 use IO.Std.write_line
 
-double_async(x: int) -> Tasks.TASK[int] => x * 2
+double_async(x: int) -> Concurrency.Future[int] => x * 2
 
 // await can be used inside a loop:
-sum_doubled(xs: Collections.List[int]) -> Tasks.TASK[int] is
+sum_doubled(xs: Collections.List[int]) -> Concurrency.Future[int] is
     let total mut = 0
 
     for x in xs do
