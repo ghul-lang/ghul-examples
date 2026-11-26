@@ -1,12 +1,12 @@
 use IO.Std.write_line
 
-double_async(x: int) -> Tasks.TASK[int] => x * 2
+double_async(x: int) -> Concurrency.Future[int] => x * 2
 
 // awaiting a faulted task throws its exception, so the function that awaits
-// it returns a faulted task too. Tasks.TASK.from_exception makes one:
-checked_divide(a: int, b: int) -> Tasks.TASK[int] is
+// it returns a faulted task too. Concurrency.Future.from_exception makes one:
+checked_divide(a: int, b: int) -> Concurrency.Future[int] is
     if b == 0 then
-        return Tasks.TASK.from_exception(
+        return Concurrency.Future.from_exception(
             Ghul.InvalidOperationException("division by zero")
         )
     fi
@@ -14,7 +14,7 @@ checked_divide(a: int, b: int) -> Tasks.TASK[int] is
     return a / b
 si
 
-divide_then_double(a: int, b: int) -> Tasks.TASK[int] is
+divide_then_double(a: int, b: int) -> Concurrency.Future[int] is
     let q = await checked_divide(a, b)
     let result = await double_async(q)
 
