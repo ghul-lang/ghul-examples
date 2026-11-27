@@ -21,7 +21,7 @@ These mistakes cost the most rework. A section below explains each one. The last
 - **A bare `let` is immutable.** A local declared `let count mut = 0` can be reassigned.
 - **An optional `T?` must be narrowed before it is used as a `T`.** Narrow it with `if x?` or `if let v = x`, or assert that it is present with `x!`.
 - **A semicolon at the end of a line is not needed.** A semicolon separates two statements on one line.
-- **On WebAssembly and native targets, a .NET API exists only if the core library declares it.** These targets do not support `decimal`. See [what differs on the wasm target](https://github.com/ghul-lang/ghul/blob/main/docs/targets.md#what-differs-on-the-wasm-target).
+- **On WebAssembly and native targets, a .NET API exists only if the core library declares it.** These targets do not support `decimal`. See [what differs on the wasm target](docs/targets.md#what-differs-on-the-wasm-target).
 
 ## the rest of the reference
 
@@ -29,13 +29,13 @@ GHUL.md covers the language that ordinary programs use. Seven further files cove
 
 | file | covers | read it when |
 | --- | --- | --- |
-| [docs/narrowing.md](https://github.com/ghul-lang/ghul/blob/main/docs/narrowing.md) | narrowing in depth: heap facts and crossings, `pure` and `stable`, getters, closure-assigned locals, nested optionals and `Result` coalescing | you need to know why a value is or is not narrowed, or you are changing the compiler's flow analysis |
-| [docs/generics.md](https://github.com/ghul-lang/ghul/blob/main/docs/generics.md) | argument packs, variance, generic-math operator imports, open generics in `typeof`, `size_of` | you are writing generic library code |
-| [docs/async.md](https://github.com/ghul-lang/ghul/blob/main/docs/async.md) | the awaiter pattern, task-like return types and their builders, asynchronous function literals | you are writing a coroutine library or a custom task type |
-| [docs/sessions.md](https://github.com/ghul-lang/ghul/blob/main/docs/sessions.md) | `--submission`, `--cells`, `--session` and `--cell-link`, and the checks each one adds | you are working on the REPL, a notebook kernel or the playground |
-| [docs/dotnet.md](https://github.com/ghul-lang/ghul/blob/main/docs/dotnet.md) | the core type names, attributes and pragmas (`@intrinsic`, `@trusted_store_free()`, `@widening()`, `@widen_operands()`, `@widened_form()`, `@finalizer()`), `DllImport`, `StructLayout`, `IL.name`, operators declared by .NET types | you are calling .NET libraries beyond the common cases |
-| [docs/targets.md](https://github.com/ghul-lang/ghul/blob/main/docs/targets.md) | what each target supports, conditional compilation, what differs on wasm, `@extern` on each target, the llvm options | you are building for WebAssembly or native executables |
-| [docs/details.md](https://github.com/ghul-lang/ghul/blob/main/docs/details.md) | access policy flags, file-level pragmas, doc comment rules, `cast` target inference, synthesised equality and `@equality()`, `@Flags()` operators, `partial` and `impl` blocks, `@precedence`, `Displayable` | you need a specific rule |
+| [docs/narrowing.md](docs/narrowing.md) | narrowing in depth: heap facts and crossings, `pure` and `stable`, getters, closure-assigned locals, nested optionals and `Result` coalescing | you need to know why a value is or is not narrowed, or you are changing the compiler's flow analysis |
+| [docs/generics.md](docs/generics.md) | argument packs, variance, generic-math operator imports, open generics in `typeof`, `size_of` | you are writing generic library code |
+| [docs/async.md](docs/async.md) | the awaiter pattern, task-like return types and their builders, asynchronous function literals | you are writing a coroutine library or a custom task type |
+| [docs/sessions.md](docs/sessions.md) | `--submission`, `--cells`, `--session` and `--cell-link`, and the checks each one adds | you are working on the REPL, a notebook kernel or the playground |
+| [docs/dotnet.md](docs/dotnet.md) | the core type names, attributes and pragmas (`@intrinsic`, `@trusted_store_free()`, `@widening()`, `@widen_operands()`, `@widened_form()`, `@finalizer()`), `DllImport`, `StructLayout`, `IL.name`, operators declared by .NET types | you are calling .NET libraries beyond the common cases |
+| [docs/targets.md](docs/targets.md) | what each target supports, conditional compilation, what differs on wasm, `@extern` on each target, the llvm options | you are building for WebAssembly or native executables |
+| [docs/details.md](docs/details.md) | access policy flags, file-level pragmas, doc comment rules, `cast` target inference, synthesised equality and `@equality()`, `@Flags()` operators, `partial` and `impl` blocks, `@precedence`, `Displayable` | you need a specific rule |
 
 ## naming conventions
 
@@ -62,7 +62,7 @@ The compiler warns when a declaration in ghūl source does not follow the conven
 - `non-pascal-case-name`: abstract classes, exception classes, traits, unions, enums.
 - `non-upper-snake-case-name`: variants and enum members, and a concrete class or struct whose name is neither `PascalCase` nor `UPPER_SNAKE_CASE`.
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#naming-conventions).*
+*More detail on this section: [language details](docs/details.md#naming-conventions).*
 
 ## namespaces and `use`
 
@@ -175,7 +175,7 @@ entry() is
 si
 ```
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#namespaces-and-use), [sessions and submissions](https://github.com/ghul-lang/ghul/blob/main/docs/sessions.md#namespaces-and-use).*
+*More detail on this section: [language details](docs/details.md#namespaces-and-use), [sessions and submissions](docs/sessions.md#namespaces-and-use).*
 
 ## comments
 
@@ -191,7 +191,7 @@ A **doc comment** is a line comment that starts with exactly three slashes, `///
 join(parts: string[], separator: string) -> string => string.join(separator, parts)
 ```
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#comments).*
+*More detail on this section: [language details](docs/details.md#comments).*
 
 ## statement terminators
 
@@ -209,7 +209,7 @@ These rules decide where a line break ends a statement. The most common come fir
 - A postfix marker must be on the same line as the thing it marks. A modifier at the start of a line (`pure`, `static`, …) belongs to the next definition, not to the header above it. A `rec` at the start of a line is the recursive self-reference call, not a rec-lambda marker, and a function literal's `memo` and `pure` markers are on the line they follow.
 - An `else` at the start of the line after a bare `assert` belongs to the assert, as its message clause, when the `else` is indented at least as far as the `assert`. Otherwise the `else` belongs to the enclosing `if` or `case` arm. Only indentation decides this. When the assert is on the same line as the `if` (`if c then assert x` / `else y fi`), an `else` at the same indentation as the `if` belongs to the assert. A `;` after the assert gives the `else` to the `if`.
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#statement-terminators).*
+*More detail on this section: [language details](docs/details.md#statement-terminators).*
 
 ## variables
 
@@ -268,7 +268,7 @@ In these cases the local keeps the type of its initializer, and the compiler rep
 
 So `let i mut = 0; i = 1L` is an error, and so is assigning a value of an unrelated class. A written type (`let pet: Animal mut = CAT()`) always fixes this.
 
-In a declaration or pattern position, `_` is the discard placeholder. These positions are `let _ = expr`, a destructure leaf `(_, b)`, a `for _`, an `if let _`, a lambda discard parameter `_ => ...` or `(_, y) => ...`, and a typed discard `(_: T)`. The discard placeholder is different from the default-value expression `_` (see [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#variables)). The two appear in different syntactic positions, so they never conflict. `_[T]` is not valid as a lambda parameter, because a lambda parameter takes its type from `_: T`. Writing `_[T]` where a lambda parameter is expected is a compile error.
+In a declaration or pattern position, `_` is the discard placeholder. These positions are `let _ = expr`, a destructure leaf `(_, b)`, a `for _`, an `if let _`, a lambda discard parameter `_ => ...` or `(_, y) => ...`, and a typed discard `(_: T)`. The discard placeholder is different from the default-value expression `_` (see [language details](docs/details.md#variables)). The two appear in different syntactic positions, so they never conflict. `_[T]` is not valid as a lambda parameter, because a lambda parameter takes its type from `_: T`. Writing `_[T]` where a lambda parameter is expected is a compile error.
 
 A single `let` can declare several variables, with inferred and explicit types mixed:
 
@@ -286,7 +286,7 @@ A variable declared at namespace scope is a **global variable**. A global variab
 counter: int;            // a global variable
 ```
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#variables).*
+*More detail on this section: [language details](docs/details.md#variables).*
 
 ## types and literals
 
@@ -569,7 +569,7 @@ In a refutable context (`if let`, or a `case` `when` pattern), a literal on the 
 
 Postfix `!` on a `T ref` dereferences it: `p!` reads the value, and `p! = v` writes the value. On a `T?`, postfix `!` asserts that the value is present and returns the value (see [optional types](#optional-types)). The parser produces the same node for both, and the operand type decides the meaning. Outside a `deconstruct` body, the dereference form is rarely needed: ghūl code usually takes a `ref` only to pass it to a .NET method that follows the try pattern.
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#types-and-literals).*
+*More detail on this section: [language details](docs/details.md#types-and-literals).*
 
 ## functions
 
@@ -782,7 +782,7 @@ Which form an operation takes follows one rule:
 
 On .NET a `LIST` also has members .NET gives it that work over any sequence: `find`, `exists`, `true_for_all`, `for_each` and `convert_all`. Each warns `[deprecated]` and names its replacement. Write `|> find`, `|> any`, `|> all`, `|> each` and `|> map`, which work on every target. .NET's `LIST.find` returns the type's default value when nothing matches, where `|> find` returns an absent value.
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#functions).*
+*More detail on this section: [language details](docs/details.md#functions).*
 
 ## type definitions
 
@@ -859,7 +859,7 @@ The rule applies whether or not a trait implemented by the class supplies a defa
 
 `super.foo()` cannot call an abstract method. A super call names the base implementation directly, and an abstract method has none.
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#classes).*
+*More detail on this section: [language details](docs/details.md#classes).*
 
 ### structs
 
@@ -905,7 +905,7 @@ si
 
 Code outside the type can read a field but not assign it or pass it by `ref`, unless the field is declared `field public`: `count: int field public` can be assigned and passed by `ref` from anywhere.
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#structs).*
+*More detail on this section: [language details](docs/details.md#structs).*
 
 ### primary constructors
 
@@ -1043,7 +1043,7 @@ si
 
 The global `parse[T](text) -> T?` is built the same way, and `use default` imports it. It gives the value `text` holds, or null where it holds none, for a value type `T`: `parse[int]("42")` is 42 and `parse[int]("x")` is null. `T` can come from the type expected, as in `let n: int? = parse(line)`. On every target, `int`, `uint`, `long`, `ulong` and `double` are `Parsable`.
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#traits).*
+*More detail on this section: [language details](docs/details.md#traits).*
 
 ### unions
 
@@ -1132,7 +1132,7 @@ si
 
 The primary parameters become fields of the union base class. So `t.location` is readable on any `TRIVIA` value, whatever its variant. A field declared in a variant, such as `text`, belongs to that variant only. The `..` can be at any position in the variant's field list. The order of fields in the synthesised constructor and in positional destructuring (`let (a, b) = trivia`) is the source order. A variant with no fields of its own can omit the field list (`BLANK_LINE;`), and is treated as `(..)`. A variant with its own fields must include exactly one `..`. This works in the same way as `..` in a class's secondary `init` ([primary constructors](#primary-constructors)).
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#unions).*
+*More detail on this section: [language details](docs/details.md#unions).*
 
 ### enums
 
@@ -1154,7 +1154,7 @@ si
 
 Enum values support the relational operators and equality (`=~` and `==`). They are ordered by their integer values. `=~` also works on an optional enum, as on any other optional. A single member can be imported by name, as in `use Some.Namespace.Suit.HEARTS;`, as well as used through the type.
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#enums).*
+*More detail on this section: [language details](docs/details.md#enums).*
 
 ### partial and impl blocks
 
@@ -1162,11 +1162,11 @@ A separate block, which can be in a separate file, can add members to a type tha
 
 The runtime library is built with one exception: with `--allow-member-injection`, a `partial` block inside `namespace Ghul.Internal` can add instance methods and read-only properties to a non-generic imported type. Each such member is compiled as a static that takes the receiver as its first argument. It is not virtual, so it can neither override nor be overridden. A value-type receiver is passed by value, so the member cannot change it.
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#partial-and-impl-blocks).*
+*More detail on this section: [language details](docs/details.md#partial-and-impl-blocks).*
 
 ### properties, methods, and visibility
 
-A property is a name and a type, with optional getter and setter bodies. A property with no bodies is stored in a hidden field. Any code can read a property. Only code in the type that defines the property can assign it. A property name that starts with `_` is non-public for reading too. How far non-public reaches depends on the `--underscore-access` policy (see [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#naming-conventions)).
+A property is a name and a type, with optional getter and setter bodies. A property with no bodies is stored in a hidden field. Any code can read a property. Only code in the type that defines the property can assign it. A property name that starts with `_` is non-public for reading too. How far non-public reaches depends on the `--underscore-access` policy (see [language details](docs/details.md#naming-conventions)).
 
 The storage and visibility modifiers of a primary-constructor parameter also apply to a declaration in the body: `x: int public` for public read and write, `x: int field` for a plain field instead of an auto-property, and `x: int static` for a static member. The `field` modifier matters most on value types (see [structs](#structs)). `private` is the exception. On a primary-constructor parameter, `private` gives the member a different name from the parameter. A declaration in the body has no second name, so `private` on a body declaration with no accessor body is an error. Name the member `_x` instead.
 
@@ -1239,11 +1239,21 @@ An operator's precedence comes from its first character. A declaration cannot se
 
 `**` raises its left operand to the power of its right one, as `pow` does, and is reached as `pow` is, through `use default` or ``use Ghul.Math.`**``. An integer or `bigint` base takes an `int` exponent, and a `double` base takes a `double`. So `2 ** 10` is 1024, `2L ** 40` is a `long`, and `x ** 0.5` is a square root. An integer power that does not fit its type throws `OverflowException`, where `*` wraps, and a negative integer exponent throws `ArgumentOutOfRangeException`. `**` binds tighter than `*`, so `2 * 3 ** 2` is 18. It groups to the left like every other operator, so `2 ** 3 ** 2` is `(2 ** 3) ** 2`, which is 64. A chain like that has a warning, because mathematics groups a power to the right; parentheses around one pair silence it. A prefix operator applies before `**`, as before any binary operator, so `-2 ** 2` is `(-2) ** 2`, which is 4.
 
+`~` is the *match* operator: `value ~ pattern` asks whether a value fits a pattern value, such as a range, a set or a predicate. Nothing declares it built in: it means what the `~` functions in scope say, and in an expression it resolves like any other operator, so `a ~ b` with no `~` for its operands is an error and does not fall back to `=~`. Its value is a `bool`. Where it earns its keep is in a pattern (see [case](#case)), which tests a value with whichever of `~` and `=~` fits it better. `~` has no negated form. `!~` is the negation of `=~`, not of `~`, so beside `~` it reads as "does not match" but still means "not equal".
+
+```ghul
+struct Below(limit: double public);
+
+~(value: double, b: Below) -> bool => value < b.limit;
+
+let cold = 3.5 ~ Below(4.0);    // true
+```
+
 The unary `\` is the bitwise complement of an integer. Its result has the operand's type: `\5` is `-6` for an `int`, `\0` is `-1`, and `\x` is `250` for a `ubyte` `x` of 5. `\` is the unary partner of the binary `&`, `|` and `^`. `!` is the logical not of a `bool`. The boolean operators `/\` and `\/` are each one token.
 
-An operator is a function value wherever a function of its type is expected, whether it is declared as a function or built in (see [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#operators)). A built-in operator is an instruction rather than a method, so the compiler synthesises a function that applies it, once for each type it is used at in a function body. The name is written with the backtick escape: ``int.`+`` names the `+` of `int`, and a bare `` `+ `` names whichever `+` the expression `a + b` would resolve to for operands of the expected function type's parameter types: the same candidates, by the same overload resolution, so a `+` declared on the right operand's type or at namespace scope is found exactly as it would be in the expression. So `xs |> reduce(0, `+)` sums an `int` sequence, and `pairs |> map(`+)` adds the elements of each pair. A bare spelling with no expected function type is an error, as is one for which no operator resolves. A bare spelling can also head a call, where the written arguments resolve it as the operands of `a - b` would and a `*` takes the formal of the operator chosen: `` `-(10, *) `` is `x => 10 - x`, and `xs |> map(`+(*, 1))` adds one to each element. A call whose every argument is `*` has nothing to resolve from and is an error. `<`, `<=`, `>`, `>=`, `!=` and `!~` are derived from `<>`, `==` and `=~` and are not functions. An instance member is not a value, whether or not it is an operator, because it needs a receiver: ``string.`<>`` is an error, and a function literal takes its place.
+An operator is a function value wherever a function of its type is expected, whether it is declared as a function or built in (see [language details](docs/details.md#operators)). A built-in operator is an instruction rather than a method, so the compiler synthesises a function that applies it, once for each type it is used at in a function body. The name is written with the backtick escape: ``int.`+`` names the `+` of `int`, and a bare `` `+ `` names whichever `+` the expression `a + b` would resolve to for operands of the expected function type's parameter types: the same candidates, by the same overload resolution, so a `+` declared on the right operand's type or at namespace scope is found exactly as it would be in the expression. So `xs |> reduce(0, `+)` sums an `int` sequence, and `pairs |> map(`+)` adds the elements of each pair. A bare spelling with no expected function type is an error, as is one for which no operator resolves. A bare spelling can also head a call, where the written arguments resolve it as the operands of `a - b` would and a `*` takes the formal of the operator chosen: `` `-(10, *) `` is `x => 10 - x`, and `xs |> map(`+(*, 1))` adds one to each element. A call whose every argument is `*` has nothing to resolve from and is an error. `<`, `<=`, `>`, `>=`, `!=` and `!~` are derived from `<>`, `==` and `=~` and are not functions. An instance member is not a value, whether or not it is an operator, because it needs a receiver: ``string.`<>`` is an error, and a function literal takes its place.
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#operators).*
+*More detail on this section: [language details](docs/details.md#operators).*
 
 ## equality
 
@@ -1385,7 +1395,7 @@ absent =~ also_absent;      // true
 absent !~ also_absent;      // false
 ```
 
-*More detail on this section: [narrowing](https://github.com/ghul-lang/ghul/blob/main/docs/narrowing.md#optional-types).*
+*More detail on this section: [narrowing](docs/narrowing.md#optional-types).*
 
 ## control flow
 
@@ -1429,7 +1439,7 @@ pet = DOG();
 write_line(pet.bark());   // pet is DOG here
 ```
 
-*More detail on this section: [narrowing](https://github.com/ghul-lang/ghul/blob/main/docs/narrowing.md#type-narrowing).*
+*More detail on this section: [narrowing](docs/narrowing.md#type-narrowing).*
 
 ### if let
 
@@ -1490,9 +1500,27 @@ if let (~expected, name) = pair then
 fi
 ```
 
-The compiler reads the marked value at the pattern, so the value does not need to be a constant. A local variable, a parameter and a field all work. A dotted name cannot express these. `~` is valid on any leaf that is a valid value to match. So `~` can be written on a literal or a dotted name, where it has no effect: `(~1, s)` and `(~Colour.RED, s)` match exactly as `(1, s)` and `(Colour.RED, s)` do. A marked leaf counts towards exhaustiveness exactly as the same leaf without `~` does. Marked enum members and booleans can cover their whole set of values. A value from a set too large to list leaves the `case` needing an `else`.
+The compiler reads the marked value at the pattern, so the value does not need to be a constant. A local variable, a parameter and a field all work. A dotted name cannot express these. `~` is valid on any leaf that is a valid value to match. So `~` can be written on a literal or a dotted name, where it has no effect: `(~1, s)` and `(~Colour.RED, s)` match exactly as `(1, s)` and `(Colour.RED, s)` do.
 
-Matching leaves (literal, dotted or marked) are valid only in refutable contexts: `if let`, `while let` and `case` `when` patterns. A plain `let` with a matching leaf is an error, because the test would never run. For the same reason, `~` is an error on a formal argument and on a lambda parameter, where a leaf can only declare a variable. `~` is also an error on a whole destructure group; it is valid only on a leaf.
+A `~` can also mark an expression, which the leaf tests the value at its position against. The expression is parsed as a call argument is, and ends at the `,`, `)` or `]` that ends the element, so `(~Below(0.0), s)`, `(~0..10, s)`, `(~limit + 1, s)` and `(~xs[0], s)` need no parentheses. `~(` opens a parenthesised expression, so `~(a, b)` is a marked tuple value. A run of operator characters is one token, so a marker before an operator takes a space or parentheses: `(~ -1, s)` or `(~(-1), s)`, and `~ * < 3`. A leaf is tested in the same way as a `when` label: with whichever of `~` and `=~` fits better.
+
+A function literal or a partial application as a pattern value is a predicate, which a `~` that takes a function can call on the value at that position. Its parameter takes that value's type, as it would take a function parameter's type as a call argument:
+
+```ghul
+~[T](value: T, test: (T) -> bool) -> bool => test(value);
+
+let kind = case (a, b)
+when (~x => x % 2 == 0, _) then "first even"
+when (_, ~ * < 3) then "second small"
+else "other"
+esac;
+```
+
+A placeholder covers only the operator it is an operand of, so `~(* % 2 == 0)` compares a function with zero and is an error, as it is in an argument list. Write `~x => x % 2 == 0`.
+
+A leaf tested with `=~` counts towards exhaustiveness exactly as the same leaf without `~` does. Marked enum members and booleans can cover their whole set of values. A value from a set too large to list leaves the `case` needing an `else`, and so does a leaf tested with `~`.
+
+Matching leaves (literal, dotted or marked) are valid only in refutable contexts: `if let`, `while let` and `case` `when` patterns. A plain `let` with a matching leaf is an error, because the test would never run. For the same reason, `~` is an error on a formal argument and on a lambda parameter, where a leaf can only declare a variable. `~` is also an error on a sequence pattern, `~[...]`; it is valid only on a leaf.
 
 *Guards* add conditions, after the test, separated by `/\`. The new variable is in scope in each guard:
 
@@ -1649,7 +1677,20 @@ else
 esac
 ```
 
-A `when` with a list of expressions matches its labels by value. `case` compares the scrutinee with each label as `=~` does, and uses `<>` when the type has no `=~`. So a `string` scrutinee, and a scrutinee of a user type that declares `=~`, compare with labels by content, not by identity. An optional scrutinee compares in the same way. `=~` handles null, so a `T?` scrutinee matches a non-null label only when it holds an equal value, and never throws on an absent value. A `when null` label matches an absent value in all three optional representations: a null reference for a reference type `T`, and an absent `Nullable[T]` or `MAYBE[T]` for a value type or generic `T`.
+A `when` with a list of expressions matches its labels by value. Each label is tested with whichever of `~` and `=~` fits the scrutinee's type and the label's type better, by the same overload resolution an expression uses: the operator whose parameters need less conversion wins, and `~` wins an exact tie. The `=~` taken part is the one `a =~ b` would resolve, member or namespace scope alike. With neither, `case` compares the scrutinee with the label as `=~` does, and uses `<>` when the type has no `=~`. A label that neither matches nor compares, such as a `string` label on an `int` scrutinee, is an error. A label may carry the `~` marker, which changes nothing there, so `when ~Below(0.0) then` and `when Below(0.0) then` are the same arm. A function literal or a partial application as a label takes its parameter type from the scrutinee, for a `~` that calls it:
+
+```ghul
+~[T](value: T, test: (T) -> bool) -> bool => test(value);
+~(value: int, r: Ghul.Range[int]) -> bool pure => value >= r.from /\ value < r.to;
+
+let size = case n
+when x => x > 100 then "big"
+when 0..10 then "small"
+else "medium"
+esac;
+```
+
+A `~` arm says nothing about which values it covers, so it never completes a closed set: a `case` over a `bool` with a `~` arm still needs arms for `true` and `false`, or an `else`. Otherwise `case` compares as before. So a `string` scrutinee, and a scrutinee of a user type that declares `=~`, compare with labels by content, not by identity. An optional scrutinee compares in the same way. `=~` handles null, so a `T?` scrutinee matches a non-null label only when it holds an equal value, and never throws on an absent value. A `when null` label matches an absent value in all three optional representations: a null reference for a reference type `T`, and an absent `Nullable[T]` or `MAYBE[T]` for a value type or generic `T`.
 
 `case` is also an expression. The last expression of each arm's body is the arm's value, and the `case` expression's value is the value of the arm that matched. A `case` expression needs one of these:
 
@@ -1668,7 +1709,7 @@ esac;
 A `when` arm can have a pattern instead of a list of expressions. The patterns are the same as in `if let`:
 
 - `when v: T then` tests the type `T`. When it matches, `v` holds the narrowed value.
-- `when (a, b) then` destructures a tuple scrutinee into named variables. A type after the pattern tests the value: `when (c, d): (CAT, DOG) then` matches when the first value is a `CAT` and the second a `DOG`, and so does `when (c: CAT, d: DOG) then`. `_` discards an element. A literal leaf, as in `when (1, label) then` or `when (Color.RED, label) then`, tests that position for equality. A leaf marked with `~`, as in `when (~expected, label) then`, tests the position against the value the name holds, and declares no variable.
+- `when (a, b) then` destructures a tuple scrutinee into named variables. A type after the pattern tests the value: `when (c, d): (CAT, DOG) then` matches when the first value is a `CAT` and the second a `DOG`, and so does `when (c: CAT, d: DOG) then`. `_` discards an element. A literal leaf, as in `when (1, label) then` or `when (Color.RED, label) then`, tests that position for equality. A leaf marked with `~`, as in `when (~expected, label) then` or `when (~Below(0.0), label) then`, tests the position against that value, with `~` or `=~`, and declares no variable.
 - `when _: T then` tests the type only, and declares no variable.
 
 Pattern arms follow the same refutability rules as `if let`. An optional scrutinee gives the pattern its unwrapped value. A value-type pattern on a plain value-type scrutinee has nothing to test. It is an error, reported once, and the pattern's variables get the error type:
@@ -1766,7 +1807,7 @@ The compiler decides whether a parenthesised group is a block, a tuple, a parent
 
 So `(a = f(x), b = g(y))` constructs a named tuple, and `(a = f(x); b = g(y); a + b)` runs two assignments and gives their sum. The `,` or `;` is the only difference, and the elements can be any expressions in both. A statement that already has an expression form keeps that form. `(let x = 5 in x * 2)` is the `let ... in` expression. `(let x = 5; x * 2)` is a block with a `let` statement and a tail.
 
-A block is also a block for disposal. A `use` or `let use` in a block disposes its value when the block ends, before the block's value is used (see [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#variables)).
+A block is also a block for disposal. A `use` or `let use` in a block disposes its value when the block ends, before the block's value is used (see [language details](docs/details.md#variables)).
 
 A common use of a block is to turn a loop into an expression. The loop body updates a `mut` accumulator, and the tail returns the result:
 
@@ -1886,7 +1927,7 @@ A function declared `-> Concurrency.Future[T]` can `return` a bare `T`. The comp
 
 A void body accepts a returned task whose `await` gives no value, in the same way.
 
-*More detail on this section: [asynchronous code](https://github.com/ghul-lang/ghul/blob/main/docs/async.md#asynchronous-code).*
+*More detail on this section: [asynchronous code](docs/async.md#asynchronous-code).*
 
 ### threads
 
@@ -1913,7 +1954,7 @@ write_line("{hits.load()}")   // 4
 
 A program that changes a value while another thread reads or changes it, with nothing ordering the two, has a bug, and what either thread then sees is not defined. `join`, a `Mutex`, and the atomics order memory: what a thread wrote before its body ended is seen after `join` gives, what one thread wrote while holding a `Mutex` is seen by the next thread to take it, and the atomic operations are sequentially consistent, so every thread sees them in one order. Collections, pipes, a `memo` cache, the coroutine scheduler and the prime functions' sieve are not safe to use from more than one thread at a time; a program shares them under a `Mutex`. A static constructor runs once, however many threads reach the type together, and they all see what it set up. The state the library keeps out of the program's sight, such as what an interpolation is rendering and the task scheduler, is kept for each thread or locked, so ordinary code on one thread pays nothing for threads. The `wasm` target runs one thread. There, `Concurrency` has the event loop, `run`, `sleep` and `pause`, and the awaited forms of `Mutex`, `Semaphore` and `Channel`. `start` takes only an asynchronous body, which it runs on the calling thread's loop. There is no `Thread`, no blocking form and no atomics.
 
-*More detail on this section: [threads on llvm](https://github.com/ghul-lang/ghul/blob/main/docs/targets.md#threads).*
+*More detail on this section: [threads on llvm](docs/targets.md#threads).*
 
 ### generators
 
@@ -2138,7 +2179,7 @@ Inside a generic, the callee receives the unwrapped `T`, and its result is the o
 
 A `|>` or `~>` at the end of a line continues the chain on the next line. Use this to wrap a long chain. Only a name can continue the chain this way. If the next line starts with anything else, the operator has no right-hand side, and the compiler reports that error. The compiler never reads the next statement as the call.
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#collections-and-pipes).*
+*More detail on this section: [language details](docs/details.md#collections-and-pipes).*
 
 ### list comprehensions
 
@@ -2190,7 +2231,7 @@ inspect((1, "one", 'c', true))    // (1, "one", 'c', true)
 Only `inspect` quotes a string or character, and only inside another value. A string or character passed directly to `inspect` is the whole result, and is written unquoted. `$` and `inspect` write a value by the first of these rules that applies:
 
 1. An absent value is `null`. A `bool` is `true` or `false`.
-2. A type that implements `Ghul.Displayable` writes itself (see [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#displaying-values)).
+2. A type that implements `Ghul.Displayable` writes itself (see [language details](docs/details.md#displaying-values)).
 3. A tuple is written as its elements in parentheses. A map entry is written as `(key, value)`.
 4. A type that declares its own `to_string` is written with that `to_string`, even when it is also a sequence. The runtime's own pipes, and generators, are the exception: their `to_string` writes their elements, and they are written as sequences.
 5. A sequence, such as an array, a list or a pipe, is written as its elements in brackets.
@@ -2199,7 +2240,7 @@ Only `inspect` quotes a string or character, and only inside another value. A st
 
 A sequence is written up to 100 elements, followed by `, ...]`. So an unbounded pipe can be written. Stopping at 100 elements has no effect on the next read of the value. A value that contains itself is written `<cycle>` where it recurs. The same value in two places is written in full both times.
 
-*More detail on this section: [language details](https://github.com/ghul-lang/ghul/blob/main/docs/details.md#displaying-values).*
+*More detail on this section: [language details](docs/details.md#displaying-values).*
 
 ## generics
 
@@ -2263,7 +2304,7 @@ takes_int(zero_of(1));                       // zero_of[T](n: int) -> T:
 
 When neither the arguments nor any later use decides a type argument, the construction or call is an error: `cannot infer type here`, or `cannot infer the type of` the local that it initializes. Write the type argument explicitly: `BOX[int]()`.
 
-*More detail on this section: [generics](https://github.com/ghul-lang/ghul/blob/main/docs/generics.md#generics).*
+*More detail on this section: [generics](docs/generics.md#generics).*
 
 ## type inference
 
@@ -2271,7 +2312,7 @@ See <https://ghul.dev/type-inference.html>.
 
 ghūl infers types widely, but inference is **function-local**, with one wider scope. A method's signature, and a namespace-scope function's in a file with a namespace block, is always written out, and the compiler infers types only inside bodies. In a file with no namespace declaration, or with a whole-file namespace, a function that leaves types out of its signature has them inferred from the whole file (see [namespaces and `use`](#namespaces-and-use)). Inside a body, the compiler infers the types of local variables, loop variables, destructured variables, the parameters and return types of function literals and nested named functions, and the type arguments of generic calls.
 
-Inference also uses later code. A variable with no type information at its declaration takes its type from how the same body uses it later. This includes the operations the body performs on the variable and, for a function, its own recursive calls. The compiler narrows local variables, fields and store-free properties (see [narrowing](https://github.com/ghul-lang/ghul/blob/main/docs/narrowing.md#type-narrowing) for how long each kind of fact lasts). The inferred type of a `let` variable is never visible outside the function that declares it.
+Inference also uses later code. A variable with no type information at its declaration takes its type from how the same body uses it later. This includes the operations the body performs on the variable and, for a function, its own recursive calls. The compiler narrows local variables, fields and store-free properties (see [narrowing](docs/narrowing.md#type-narrowing) for how long each kind of fact lasts). The inferred type of a `let` variable is never visible outside the function that declares it.
 
 ## .NET interop
 
@@ -2340,7 +2381,7 @@ Defining `=~` also decides how .NET compares the type, when `get_hash_code` is a
 
 A type needs both `=~` and `get_hash_code`, because .NET requires equal values to have equal hashes, and a hash-based collection checks the hash first. A type that defines neither is consistent, because it compares and hashes by identity. So a type that defines only `=~` gets an `equality-without-hash` warning, and the compiler does not synthesise `Equals(object)` for it. The compiler does not synthesise the hash, because an operator can ignore some of the fields it reads, and a hash of all the members would then disagree with the operator.
 
-A member `=~` or `<>` must be `pure`: declared `pure`, or provably store-free. Otherwise it is a compile error. The compiler trusts both operators on an operand whose type is known only later, such as a lambda parameter. It also trusts `=~` when a comparison goes through `EqualityComparerBase[T].default` (see [.NET interop in depth](https://github.com/ghul-lang/ghul/blob/main/docs/dotnet.md#net-interop)). Nothing at these call sites can check what the implementation does, so an implementation that could store would make this trust unsound. Most bodies are provably store-free with no annotation: comparisons of fields and properties, and calls to another type's `=~` or `<>`. Add `pure` when the body does more than the analysis can follow, such as a loop or a call that the analysis cannot bound. An override of a pure `=~` or `<>` must also be pure, as for any other [pure function](#type-narrowing).
+Every `=~`, `<>` and `~`, a member or one declared at namespace scope, must be `pure`: declared `pure`, or provably store-free. Otherwise it is a compile error. The compiler trusts both operators on an operand whose type is known only later, such as a lambda parameter. It also trusts `=~` when a comparison goes through `EqualityComparerBase[T].default` (see [.NET interop in depth](docs/dotnet.md#net-interop)). Nothing at these call sites can check what the implementation does, so an implementation that could store would make this trust unsound. Most bodies are provably store-free with no annotation: comparisons of fields and properties, and calls to another type's `=~` or `<>`. Add `pure` when the body does more than the analysis can follow, such as a loop or a call that the analysis cannot bound. An override of a pure `=~` or `<>` must also be pure, as for any other [pure function](#type-narrowing).
 
 A backtick escapes an identifier that is a ghūl keyword: `` `class `` is the identifier `class`.
 
@@ -2443,14 +2484,14 @@ app.map_get(
 );
 ```
 
-*More detail on this section: [.NET interop in depth](https://github.com/ghul-lang/ghul/blob/main/docs/dotnet.md#net-interop).*
+*More detail on this section: [.NET interop in depth](docs/dotnet.md#net-interop).*
 
 ## compilation targets
 
 See <https://ghul.dev/webassembly.html>.
 
-`--target` chooses the target. `dotnet` is the default, and writes a .NET assembly. `wasm` writes a WebAssembly module that uses the GC proposal, and a JavaScript loader next to it. The module file has the extension `.wasm` (a name with no extension gets it), and the loader has the same name with the extension `.mjs` and finds the module beside it. The loader ships with the core library, as `ghul-core/host/loader.mjs`, and `--wasm-loader <path>` names the copy to write; a wasm executable built without it is refused. `ghul build` passes it for you. The loader runs the module under Node.js 22.19 or later on the 22 line, 24.15 or later on the 24 line, or 25 or later. Node 23 cannot run it. `llvm` writes a native executable (see [compilation targets](https://github.com/ghul-lang/ghul/blob/main/docs/targets.md#compilation-targets)). The same source builds for each target, and has the same meaning on each. Where the `wasm` target cannot compile something yet, it reports an error; it never compiles the code with a different meaning.
+`--target` chooses the target. `dotnet` is the default, and writes a .NET assembly. `wasm` writes a WebAssembly module that uses the GC proposal, and a JavaScript loader next to it. The module file has the extension `.wasm` (a name with no extension gets it), and the loader has the same name with the extension `.mjs` and finds the module beside it. The loader ships with the core library, as `ghul-core/host/loader.mjs`, and `--wasm-loader <path>` names the copy to write; a wasm executable built without it is refused. `ghul build` passes it for you. The loader runs the module under Node.js 22.19 or later on the 22 line, 24.15 or later on the 24 line, or 25 or later. Node 23 cannot run it. `llvm` writes a native executable (see [compilation targets](docs/targets.md#compilation-targets)). The same source builds for each target, and has the same meaning on each. Where the `wasm` target cannot compile something yet, it reports an error; it never compiles the code with a different meaning.
 
 The wasm and llvm targets both behave like a .NET program configured for invariant globalization (`System.Globalization.Invariant`). Strings compare and sort by code unit, and numbers and dates have the same format on every machine. A .NET program gets the same behaviour by setting `<InvariantGlobalization>true</InvariantGlobalization>` in its project.
 
-*More detail on this section: [compilation targets](https://github.com/ghul-lang/ghul/blob/main/docs/targets.md#compilation-targets), [conditional compilation](https://github.com/ghul-lang/ghul/blob/main/docs/targets.md#conditional-compilation), [foreign functions](https://github.com/ghul-lang/ghul/blob/main/docs/targets.md#foreign-functions), [what differs on the wasm target](https://github.com/ghul-lang/ghul/blob/main/docs/targets.md#what-differs-on-the-wasm-target).*
+*More detail on this section: [compilation targets](docs/targets.md#compilation-targets), [conditional compilation](docs/targets.md#conditional-compilation), [foreign functions](docs/targets.md#foreign-functions), [what differs on the wasm target](docs/targets.md#what-differs-on-the-wasm-target).*
